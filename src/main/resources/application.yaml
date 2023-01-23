@@ -1,3 +1,6 @@
 spring:
   application:
     name: cinema
+server:
+  servlet:
+    context-path: /cinema
