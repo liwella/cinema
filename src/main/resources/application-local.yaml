@@ -10,3 +10,5 @@ spring:
       maximum-pool-size: 10
       connection-timeout: 10000
       max-lifetime: 1800000
+mybatis-plus:
+  type-enums-package: com.liwell.cinema.domain.enum
