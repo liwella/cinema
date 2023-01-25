@@ -2,6 +2,8 @@ package com.liwell.cinema.domain.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Description:
  *
@@ -12,5 +14,8 @@ import lombok.Data;
 public class MvCollectDTO {
 
     private Integer time;
+
+    @NotNull
+    private Integer collectId;
 
 }
