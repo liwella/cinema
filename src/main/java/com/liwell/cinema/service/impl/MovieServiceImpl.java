@@ -11,7 +11,9 @@ import com.liwell.cinema.mapper.CollectConfigMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Description:
@@ -24,6 +26,8 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
 
     @Autowired
     private CollectConfigMapper collectConfigMapper;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public void collect(MvCollectDTO mvCollectDTO) {
@@ -33,6 +37,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             throw new ResultException(ResultEnum.DATA_NOT_EXIST);
         }
         String listUrl = collectConfig.getListUrl();
+        HttpHeaders httpHeaders = new HttpHeaders();
 
     }
 
