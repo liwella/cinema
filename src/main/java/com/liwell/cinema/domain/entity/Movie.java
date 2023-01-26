@@ -1,8 +1,9 @@
 package com.liwell.cinema.domain.entity;
 
 import com.liwell.cinema.domain.enums.MvAreaEnum;
-import com.liwell.cinema.domain.enums.MvStateEnum;
 import com.liwell.cinema.domain.enums.MvTypeEnum;
+import com.liwell.cinema.domain.enums.StateEnum;
+import com.liwell.cinema.domain.po.CollectDetail;
 import lombok.Data;
 
 import java.util.Date;
@@ -32,7 +33,7 @@ public class Movie {
 
     private String description;
 
-    private MvStateEnum state;
+    private StateEnum state;
 
     private String picture;
 
@@ -40,4 +41,8 @@ public class Movie {
 
     private Double score;
 
+    public void init(CollectDetail collectDetail) {
+        setMvName(collectDetail.getVod_name());
+
+    }
 }

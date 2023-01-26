@@ -12,23 +12,11 @@ import java.util.List;
  * @date Created on 2023/1/25
  */
 @Data
-public class CollectListResult {
+public class CollectListResult extends CollectResult {
 
     @JSONField(name = "class")
     private List<CollectClass> collectClasses;
 
     private List<CollectDetail> list;
-
-    private Integer code;
-
-    private String limit;
-
-    private String msg;
-
-    private Integer page;
-
-    private Integer pagecount;
-
-    private Integer total;
 
 }
