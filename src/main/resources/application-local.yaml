@@ -21,3 +21,12 @@ spring:
         max-wait: -1ms
 mybatis-plus:
   type-enums-package: com.liwell.cinema.domain.enums
+  mapper-locations: classpath*:com.liwell.cinema.mapper/**Mapper.xml
+  type-aliases-package: com.liwell.cinema.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      field-strategy: not-null
+      table-underline: true

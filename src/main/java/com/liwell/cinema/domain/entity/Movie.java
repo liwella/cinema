@@ -3,7 +3,6 @@ package com.liwell.cinema.domain.entity;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.liwell.cinema.domain.enums.MvAreaEnum;
-import com.liwell.cinema.domain.enums.MvTypeEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.po.CollectDetail;
 import com.liwell.cinema.util.EnumUtils;
@@ -24,7 +23,7 @@ public class Movie {
 
     private String mvName;
 
-    private MvTypeEnum mvType;
+    private Integer mvType;
 
     private MvAreaEnum mvArea;
 
@@ -46,7 +45,7 @@ public class Movie {
 
     public void init(CollectDetail collectDetail) {
         setMvName(collectDetail.getVod_name());
-        setMvType(EnumUtils.get(MvTypeEnum.class, collectDetail.getType_id()));
+        setMvType(null);
         setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
         setMvYear(Integer.parseInt(collectDetail.getVod_year()));
         setCreateTime(DateUtil.parse(collectDetail.getVod_time(), DatePattern.NORM_DATETIME_PATTERN));
