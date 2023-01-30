@@ -13,8 +13,11 @@ import com.liwell.cinema.domain.po.CollectListResult;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.CollectConfigMapper;
 import com.liwell.cinema.mapper.MovieMapper;
+import com.liwell.cinema.mapper.PlaylistMapper;
 import com.liwell.cinema.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,10 +37,16 @@ import java.util.stream.Collectors;
 @Service
 public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements MovieService {
 
+    private final String MOVIE_ID = "movie_id";
+
     @Autowired
     private CollectConfigMapper collectConfigMapper;
     @Autowired
+    private PlaylistMapper playlistMapper;
+    @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void collect(MvCollectDTO mvCollectDTO) {
@@ -53,14 +63,16 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         }
         Integer pagecount = pageCountResponse.getBody().getPagecount();
         for (int i = 0; i < pagecount; i++) {
-            ResponseEntity<CollectListResult> responseEntity = restTemplate.getForEntity(listUrl + "&pg=" + i, CollectListResult.class, new HashMap<>());
+            Map<String, Integer> listParam = new HashMap<>();
+            listParam.put("pg", i);
+            ResponseEntity<CollectListResult> responseEntity = restTemplate.getForEntity(listUrl, CollectListResult.class, listParam);
             if (responseEntity.getBody() == null) {
                 continue;
             }
             List<CollectDetail> list = responseEntity.getBody().getList();
             List<Integer> idList = list.stream().map(CollectDetail::getVod_id).collect(Collectors.toList());
             String detailUrl = collectConfig.getDetailUrl();
-            HashMap<String, List<Integer>> detailParam = new HashMap<>();
+            Map<String, List<Integer>> detailParam = new HashMap<>();
             detailParam.put("ids", idList);
             ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate.getForEntity(detailUrl, CollectDetailResult.class, detailParam);
             CollectDetailResult detailResult = detailResultResponseEntity.getBody();
@@ -73,10 +85,40 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             for (CollectDetail collectDetail : collectDetails) {
                 Movie movie = new Movie();
                 movie.init(collectDetail);
+                int movieId = generateMovieId();
+                movie.setId(movieId);
+                movies.add(movie);
+                playlists.addAll(generatePlaylist(collectDetail, movieId));
+            }
+            baseMapper.insertMovies(movies);
+            playlistMapper.insertPlaylist(playlists);
+        }
+    }
 
+    private List<Playlist> generatePlaylist(CollectDetail collectDetail, Integer movieId) {
+        List<Playlist> result = new ArrayList<>();
+        String[] playSource = collectDetail.getVod_play_from().split(collectDetail.getVod_play_note());
+        String[] sourceUrls = collectDetail.getVod_play_url().split(collectDetail.getVod_play_note());
+        for (int i = 0; i < sourceUrls.length; i++) {
+            String sourceUrl = sourceUrls[i];
+            String[] tagAndUrls = sourceUrl.split("#");
+            for (String tagAndUrl : tagAndUrls) {
+                String[] tagUrl = tagAndUrl.split("$");
+                Playlist playlist = new Playlist();
+                playlist.setMovieId(movieId);
+                playlist.setSource(playSource[i]);
+                playlist.setTag(tagUrl[0]);
+                playlist.setUrl(tagUrl[1]);
+                result.add(playlist);
             }
         }
+        return result;
+    }
 
+    private int generateMovieId() {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        Long movieId = valueOperations.increment(MOVIE_ID);
+        return movieId.intValue();
     }
 
 }

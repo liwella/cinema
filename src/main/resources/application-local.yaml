@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://1.12.233.74:3306/cinema?useSSL=false&autoReconnect=true&sessionVariables=FOREIGN_KEY_CHECKS=0&useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://1.12.233.74:8002/cinema?useSSL=false&autoReconnect=true&sessionVariables=FOREIGN_KEY_CHECKS=0&useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
     username: root
     password: qwer1234
     type: com.zaxxer.hikari.HikariDataSource
@@ -10,5 +10,14 @@ spring:
       maximum-pool-size: 10
       connection-timeout: 10000
       max-lifetime: 1800000
+  redis:
+    host: 1.12.233.74
+    port: 8001
+    jedis:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
 mybatis-plus:
-  type-enums-package: com.liwell.cinema.domain.enum
+  type-enums-package: com.liwell.cinema.domain.enums

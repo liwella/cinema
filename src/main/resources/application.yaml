@@ -4,3 +4,4 @@ spring:
 server:
   servlet:
     context-path: /cinema
+  port: 9000

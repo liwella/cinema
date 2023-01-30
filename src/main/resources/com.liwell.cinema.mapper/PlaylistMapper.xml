@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwell.cinema.mapper.PlaylistMapper">
+
+    <insert id="insertPlaylist" parameterType="java.util.List">
+        insert into playlist (
+            movie_id,
+            source,
+            tag,
+            url
+        ) values
+        <foreach collection="playlists" item="item" separator=",">
+            (#{item.movieId},
+             #{item.source},
+             #{item.tag},
+             #{item.url})
+        </foreach>
+    </insert>
+
+</mapper>

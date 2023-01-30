@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liwell.cinema.mapper.MovieMapper">
+
+    <insert id="insertMovies" parameterType="java.util.List">
+        insert into movie
+            (id,
+             mv_name,
+             mv_type,
+             mv_area,
+             mv_year,
+             create_time,
+             update_time,
+             description,
+             state,
+             picture,
+             screen_picture,
+             score)
+        values 
+        <foreach collection="movies" item="item" separator=",">
+            (#{item.id},
+             #{item.mvName},
+             #{item.mvType},
+             #{item.mvArea},
+             #{item.mvYear},
+             #{item.createTime},
+             null,
+             #{item.description},
+             1,
+             #{item.picture},
+             null,
+             #{item.score})
+        </foreach>
+    </insert>
+
+</mapper>

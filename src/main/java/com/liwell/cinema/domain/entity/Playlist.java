@@ -15,7 +15,9 @@ public class Playlist {
 
     private Integer movieId;
 
-    private Integer number;
+    private String source;
+
+    private String tag;
 
     private String url;
 
