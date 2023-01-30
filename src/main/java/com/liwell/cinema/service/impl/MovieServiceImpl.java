@@ -20,6 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
+    @Transactional
     public void collect(MvCollectDTO mvCollectDTO) {
         CollectConfig collectConfig = collectConfigMapper.selectOne(
                 new QueryWrapper<CollectConfig>().eq("id", mvCollectDTO.getCollectId()).eq("state", 1));
@@ -97,13 +99,13 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
 
     private List<Playlist> generatePlaylist(CollectDetail collectDetail, Integer movieId) {
         List<Playlist> result = new ArrayList<>();
-        String[] playSource = collectDetail.getVod_play_from().split(collectDetail.getVod_play_note());
-        String[] sourceUrls = collectDetail.getVod_play_url().split(collectDetail.getVod_play_note());
+        String[] playSource = collectDetail.getVod_play_from().split("\\$\\$\\$");
+        String[] sourceUrls = collectDetail.getVod_play_url().split("\\$\\$\\$");
         for (int i = 0; i < sourceUrls.length; i++) {
             String sourceUrl = sourceUrls[i];
             String[] tagAndUrls = sourceUrl.split("#");
             for (String tagAndUrl : tagAndUrls) {
-                String[] tagUrl = tagAndUrl.split("$");
+                String[] tagUrl = tagAndUrl.split("\\$");
                 Playlist playlist = new Playlist();
                 playlist.setMovieId(movieId);
                 playlist.setSource(playSource[i]);

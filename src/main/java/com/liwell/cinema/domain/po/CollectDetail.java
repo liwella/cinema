@@ -15,7 +15,7 @@ public class CollectDetail {
     private Integer type_id; // 分类id
     private Integer type_id_1;
     private String type_name; // 分类名称
-    private Integer vod_actor; // 演员列表
+    private String vod_actor; // 演员列表
     private String vod_area; // 地区
     private String vod_author;
     private String vod_behind;
