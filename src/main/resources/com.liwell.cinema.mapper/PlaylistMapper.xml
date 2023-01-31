@@ -5,15 +5,21 @@
     <insert id="insertPlaylist" parameterType="java.util.List">
         insert into playlist (
             movie_id,
-            source,
-            tag,
-            url
+            source_id,
+            source_movie_id,
+            play_type,
+            play_url,
+            update_time,
+            separator_note
         ) values
         <foreach collection="playlists" item="item" separator=",">
             (#{item.movieId},
-             #{item.source},
-             #{item.tag},
-             #{item.url})
+             #{item.sourceId},
+             #{item.sourceMovieId},
+             #{item.playType},
+             #{item.playUrl},
+             #{item.updateTime},
+             #{item.separatorNote})
         </foreach>
     </insert>
 

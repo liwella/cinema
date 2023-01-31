@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.MvCollectDTO;
 import com.liwell.cinema.domain.entity.ClassMapping;
-import com.liwell.cinema.domain.entity.CollectConfig;
 import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.entity.Playlist;
+import com.liwell.cinema.domain.entity.SourceConfig;
 import com.liwell.cinema.domain.enums.MvAreaEnum;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
@@ -17,11 +17,12 @@ import com.liwell.cinema.domain.po.CollectDetailResult;
 import com.liwell.cinema.domain.po.CollectListResult;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.ClassMappingMapper;
-import com.liwell.cinema.mapper.CollectConfigMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
+import com.liwell.cinema.mapper.SourceConfigMapper;
 import com.liwell.cinema.service.MovieService;
 import com.liwell.cinema.util.EnumUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -30,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,12 +41,13 @@ import java.util.stream.Collectors;
  * @date Created on 2023/1/24
  */
 @Service
+@Slf4j
 public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements MovieService {
 
     private final String MOVIE_ID = "movie_id";
 
     @Autowired
-    private CollectConfigMapper collectConfigMapper;
+    private SourceConfigMapper sourceConfigMapper;
     @Autowired
     private PlaylistMapper playlistMapper;
     @Autowired
@@ -61,12 +60,12 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Override
     @Transactional
     public void collect(MvCollectDTO mvCollectDTO) {
-        CollectConfig collectConfig = collectConfigMapper.selectOne(
-                new QueryWrapper<CollectConfig>().eq("id", mvCollectDTO.getCollectId()).eq("state", 1));
-        if (collectConfig == null) {
+        SourceConfig sourceConfig = sourceConfigMapper.selectOne(
+                new QueryWrapper<SourceConfig>().eq("id", mvCollectDTO.getCollectId()).eq("state", 1));
+        if (sourceConfig == null) {
             throw new ResultException(ResultEnum.DATA_NOT_EXIST);
         }
-        String listUrl = collectConfig.getListUrl();
+        String listUrl = sourceConfig.getListUrl();
         ResponseEntity<CollectListResult> pageCountResponse = restTemplate
                 .getForEntity(listUrl, CollectListResult.class, new HashMap<>());
         if (pageCountResponse.getBody() == null || pageCountResponse.getStatusCodeValue() != 200) {
@@ -83,7 +82,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             }
             List<CollectDetail> list = responseEntity.getBody().getList();
             List<Integer> idList = list.stream().map(CollectDetail::getVod_id).collect(Collectors.toList());
-            String detailUrl = collectConfig.getDetailUrl();
+            String detailUrl = sourceConfig.getDetailUrl();
             Map<String, List<Integer>> detailParam = new HashMap<>();
             detailParam.put("ids", idList);
             ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate.getForEntity(detailUrl, CollectDetailResult.class, detailParam);
@@ -96,8 +95,20 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             List<Playlist> playlists = new ArrayList<>();
             for (CollectDetail collectDetail : collectDetails) {
                 Movie movie = generateMovie(collectDetail, classMapping);
+                if (movie == null) {
+                    continue;
+                }
                 movies.add(movie);
-                playlists.addAll(generatePlaylist(collectDetail, movie.getId()));
+                playlists.add(generatePlaylist(collectDetail, movie.getId(), mvCollectDTO));
+                log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
+                        "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，采集成功！");
+            }
+            // @todo 仅供测试结束使用
+            if (i == 3) {
+                return;
+            }
+            if (movies.size() == 0) {
+                continue;
             }
             baseMapper.insertMovies(movies);
             playlistMapper.insertPlaylist(playlists);
@@ -116,11 +127,19 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     private Movie generateMovie(CollectDetail collectDetail, Map<Integer, Integer> classMapping) {
         Movie movie = new Movie();
         movie.setMvName(collectDetail.getVod_name());
+        if (classMapping.get(collectDetail.getType_id()) == null) {
+            log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
+                    "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
+            return null;
+        }
         movie.setMvType(classMapping.get(collectDetail.getType_id()));
-        movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
-        movie.setMvYear(Integer.parseInt(collectDetail.getVod_year()));
-        movie.setCreateTime(DateUtil.parse(collectDetail.getVod_time(), DatePattern.NORM_DATETIME_PATTERN));
+        movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ? MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
+        movie.setMvYear(collectDetail.getVod_year() == null ? 1980 : Integer.parseInt(collectDetail.getVod_year()));
+        movie.setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
+        movie.setUpdateTime(new Date());
         movie.setDescription(collectDetail.getVod_content());
+        movie.setActorList(collectDetail.getVod_actor());
+        movie.setDirectorList(collectDetail.getVod_director());
         movie.setState(StateEnum.VALID);
         movie.setPicture(collectDetail.getVod_pic());
         movie.setScore(Double.valueOf(collectDetail.getVod_douban_score()));
@@ -135,7 +154,19 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return movieId.intValue();
     }
 
-    private List<Playlist> generatePlaylist(CollectDetail collectDetail, Integer movieId) {
+    private Playlist generatePlaylist(CollectDetail collectDetail, Integer movieId, MvCollectDTO dto) {
+        Playlist playlist = new Playlist();
+        playlist.setMovieId(movieId);
+        playlist.setSourceId(dto.getCollectId());
+        playlist.setSourceMovieId(collectDetail.getVod_id());
+        playlist.setPlayType(collectDetail.getVod_play_from());
+        playlist.setPlayUrl(collectDetail.getVod_play_url());
+        playlist.setSeparatorNote(collectDetail.getVod_play_note());
+        playlist.setUpdateTime(DateUtil.parse(collectDetail.getVod_time(), DatePattern.NORM_DATETIME_PATTERN));
+        return playlist;
+    }
+
+    /*private List<Playlist> generatePlaylist(CollectDetail collectDetail, Integer movieId) {
         List<Playlist> result = new ArrayList<>();
         String[] playSource = collectDetail.getVod_play_from().split("\\$\\$\\$");
         String[] sourceUrls = collectDetail.getVod_play_url().split("\\$\\$\\$");
@@ -153,6 +184,6 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             }
         }
         return result;
-    }
+    }*/
 
 }

@@ -79,8 +79,8 @@ public class CollectDetail {
     private Integer vod_status;
     private String vod_sub;
     private String vod_tag;
-    private String vod_time; // 上架时间
-    private Integer vod_time_add; // 上架时间戳
+    private String vod_time; // 更新时间
+    private Integer vod_time_add; // 更新时间戳
     private Integer vod_time_hits;
     private Integer vod_time_make;
     private Integer vod_total; // 总集数

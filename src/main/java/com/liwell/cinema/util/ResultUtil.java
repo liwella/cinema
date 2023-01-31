@@ -27,6 +27,10 @@ public class ResultUtil {
         return success(resultEnum, null);
     }
 
+    public static<T> Result<T> success(T data) {
+        return success(ResultEnum.SUCCESS, data);
+    }
+
 
     public static <T> Result<T> fail(String msg) {
         return result(ResultEnum.FAIL.getValue(), msg, null);

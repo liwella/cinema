@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.IEnum;
  */
 public enum MvAreaEnum implements IEnum<Integer> {
 
+    UNKNOWN(-1, "未知"),
     CHINESE(1, "中国大陆");
 
     private Integer value;

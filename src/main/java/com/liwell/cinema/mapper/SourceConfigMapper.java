@@ -1,7 +1,7 @@
 package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.liwell.cinema.domain.entity.CollectConfig;
+import com.liwell.cinema.domain.entity.SourceConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
-public interface CollectConfigMapper extends BaseMapper<CollectConfig> {
+public interface SourceConfigMapper extends BaseMapper<SourceConfig> {
 
 
 }

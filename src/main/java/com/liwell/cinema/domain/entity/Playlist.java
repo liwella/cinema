@@ -2,6 +2,8 @@ package com.liwell.cinema.domain.entity;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * Description:
  *
@@ -15,10 +17,16 @@ public class Playlist {
 
     private Integer movieId;
 
-    private String source;
+    private Integer sourceId;
 
-    private String tag;
+    private Integer sourceMovieId;
 
-    private String url;
+    private String playType;
+
+    private String playUrl;
+
+    private Date updateTime;
+
+    private String separatorNote;
 
 }

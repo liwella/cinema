@@ -10,7 +10,7 @@ import lombok.Data;
  * @date Created on 2023/1/24
  */
 @Data
-public class CollectConfig {
+public class SourceConfig {
 
     private Integer id;
 
