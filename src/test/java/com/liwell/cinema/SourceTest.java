@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @ActiveProfiles("local")
-public class CollectTest {
+public class SourceTest {
 
     @Autowired
     private MovieService movieService;

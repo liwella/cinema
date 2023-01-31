@@ -4,23 +4,37 @@
 
     <insert id="insertPlaylist" parameterType="java.util.List">
         insert into playlist (
-            movie_id,
-            source_id,
-            source_movie_id,
-            play_type,
-            play_url,
-            update_time,
-            separator_note
+        movie_id,
+        source_id,
+        source_movie_id,
+        play_type,
+        play_url,
+        update_time,
+        separator_note
         ) values
         <foreach collection="playlists" item="item" separator=",">
             (#{item.movieId},
-             #{item.sourceId},
-             #{item.sourceMovieId},
-             #{item.playType},
-             #{item.playUrl},
-             #{item.updateTime},
-             #{item.separatorNote})
+            #{item.sourceId},
+            #{item.sourceMovieId},
+            #{item.playType},
+            #{item.playUrl},
+            #{item.updateTime},
+            #{item.separatorNote})
         </foreach>
     </insert>
+
+    <select id="selectPlaylistPO" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.po.PlaylistPO">
+        select pl.movie_id movieId,
+               pl.source_id sourceId,
+               pl.source_movie_id sourceMovieId,
+               pl.play_type playType,
+               pl.play_url playUrl,
+               pl.separator_note separatorNote,
+               sc.source_name sourceName
+        from playlist pl
+        left join source_config sc
+        on pl.source_id=sc.id
+        where pl.movie_id=#{value}
+    </select>
 
 </mapper>

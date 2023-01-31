@@ -166,24 +166,4 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return playlist;
     }
 
-    /*private List<Playlist> generatePlaylist(CollectDetail collectDetail, Integer movieId) {
-        List<Playlist> result = new ArrayList<>();
-        String[] playSource = collectDetail.getVod_play_from().split("\\$\\$\\$");
-        String[] sourceUrls = collectDetail.getVod_play_url().split("\\$\\$\\$");
-        for (int i = 0; i < sourceUrls.length; i++) {
-            String sourceUrl = sourceUrls[i];
-            String[] tagAndUrls = sourceUrl.split("#");
-            for (String tagAndUrl : tagAndUrls) {
-                String[] tagUrl = tagAndUrl.split("\\$");
-                Playlist playlist = new Playlist();
-                playlist.setMovieId(movieId);
-                playlist.setSource(playSource[i]);
-                playlist.setTag(tagUrl[0]);
-                playlist.setUrl(tagUrl[1]);
-                result.add(playlist);
-            }
-        }
-        return result;
-    }*/
-
 }

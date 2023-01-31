@@ -17,8 +17,6 @@ public class PlaylistVO {
 
     private String sourceName;
 
-    private String playType;
-
-    private List<PlayDetailVO> playDetailList;
+    private List<PlayTypeVO> playSources;
 
 }
