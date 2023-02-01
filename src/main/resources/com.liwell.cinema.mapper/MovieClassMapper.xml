@@ -3,6 +3,15 @@
 <mapper namespace="com.liwell.cinema.mapper.MovieClassMapper">
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select max(sort) from movie_class where level=#{value}
+        select max(sort) from movie_class
+        <where>
+            <if test="parent==null">
+                parent is null
+            </if>
+            <if test="parent!=null">
+                parent=#{parent}
+            </if>
+        </where>
     </select>
+
 </mapper>

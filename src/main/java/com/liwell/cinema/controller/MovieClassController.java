@@ -1,6 +1,7 @@
 package com.liwell.cinema.controller;
 
 import com.liwell.cinema.domain.dto.MovieClassAddDTO;
+import com.liwell.cinema.domain.dto.MovieClassMoveDTO;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.MovieClassListVO;
 import com.liwell.cinema.service.MovieClassService;
@@ -27,14 +28,33 @@ public class MovieClassController {
     @Autowired
     private MovieClassService movieClassService;
 
+    /**
+     * 分类展示
+     * @return
+     */
     @PostMapping("/listMovieClass")
     public Result<List<MovieClassListVO>> listMovieClass() {
         return ResultUtil.success(movieClassService.listMovieClass(null));
     }
 
+    /**
+     * 新增分类
+     * @param dto
+     * @return
+     */
     @PostMapping("/addMovieClass")
     public Result addMovieClass(@RequestBody @Valid MovieClassAddDTO dto) {
         return ResultUtil.trueOrFalse(movieClassService.addMovieClass(dto));
+    }
+
+    /**
+     * 上下移动分类
+     * @param dto
+     * @return
+     */
+    @PostMapping("/moveMovieClass")
+    public Result moveMovieClass(@RequestBody @Valid MovieClassMoveDTO dto) {
+        return ResultUtil.trueOrFalse(movieClassService.moveMovieClass(dto));
     }
 
 }

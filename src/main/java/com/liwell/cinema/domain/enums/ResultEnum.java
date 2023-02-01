@@ -14,7 +14,8 @@ public enum ResultEnum implements IEnum<Integer> {
     FAIL(-1, "操作失败"),
     DATA_NOT_EXIST(1001, "查询数据出错！"),
 
-    THIRD_INTERFACE_ERROR(1002, "调用第三方接口出错！")
+    THIRD_INTERFACE_ERROR(1002, "调用第三方接口出错！"),
+    ALREADY_TOP(1003, "已是最上层/底层节点，无法移动")
     ;
 
     private Integer value;
