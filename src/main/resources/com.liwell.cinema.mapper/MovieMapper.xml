@@ -11,6 +11,7 @@
              mv_year,
              create_time,
              update_time,
+             update_info,
              description,
              actor_list,
              director_list,
@@ -27,6 +28,7 @@
              #{item.mvYear},
              #{item.createTime},
              #{item.updateTime},
+             #{item.updateInfo},
              #{item.description},
              #{item.actorList},
              #{item.directorList},
@@ -36,5 +38,15 @@
              #{item.score})
         </foreach>
     </insert>
+
+    <select id="pageMovie" resultType="com.liwell.cinema.domain.vo.MvPageVO">
+        select
+            id movieId,
+            mv_name mvName,
+            update_info updateInfo,
+            picture picture,
+            actor_list actorList
+        from movie
+    </select>
 
 </mapper>

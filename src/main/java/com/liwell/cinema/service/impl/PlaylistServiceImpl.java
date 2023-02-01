@@ -1,5 +1,6 @@
 package com.liwell.cinema.service.impl;
 
+import cn.hutool.core.util.ReUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.PlaylistGetDTO;
 import com.liwell.cinema.domain.entity.Playlist;
@@ -28,8 +29,9 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
         List<PlaylistPO> playlistPOS = baseMapper.selectPlaylistPO(dto.getMovieId());
         List<PlaylistVO> result = new ArrayList<>();
         for (PlaylistPO playlistPO : playlistPOS) {
-            String[] playTypes = playlistPO.getPlayType().split(playlistPO.getSeparatorNote());
-            String[] playSources = playlistPO.getPlayUrl().split(playlistPO.getSeparatorNote());
+            String separatorNote = ReUtil.escape(playlistPO.getSeparatorNote());
+            String[] playTypes = playlistPO.getPlayType().split(separatorNote);
+            String[] playSources = playlistPO.getPlayUrl().split(separatorNote);
             List<PlayTypeVO> playTypeVOS = new ArrayList<>();
             for (int i = 0; i < playSources.length; i++) {
                 String playSource = playSources[i];

@@ -3,8 +3,10 @@ package com.liwell.cinema.service.impl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.MvCollectDTO;
+import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.entity.ClassMapping;
 import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.entity.Playlist;
@@ -15,6 +17,7 @@ import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.po.CollectDetail;
 import com.liwell.cinema.domain.po.CollectDetailResult;
 import com.liwell.cinema.domain.po.CollectListResult;
+import com.liwell.cinema.domain.vo.MvPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.ClassMappingMapper;
 import com.liwell.cinema.mapper.MovieMapper;
@@ -23,6 +26,7 @@ import com.liwell.cinema.mapper.SourceConfigMapper;
 import com.liwell.cinema.service.MovieService;
 import com.liwell.cinema.util.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -32,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 /**
  * Description:
@@ -57,6 +61,10 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    /**
+     * 资源采集
+     * @param mvCollectDTO
+     */
     @Override
     @Transactional
     public void collect(MvCollectDTO mvCollectDTO) {
@@ -71,21 +79,13 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         if (pageCountResponse.getBody() == null || pageCountResponse.getStatusCodeValue() != 200) {
             throw new ResultException(ResultEnum.THIRD_INTERFACE_ERROR);
         }
-        Integer pagecount = pageCountResponse.getBody().getPagecount();
+        Integer pageCount = pageCountResponse.getBody().getPagecount();
         Map<Integer, Integer> classMapping = getClassMapping(mvCollectDTO.getCollectId());
-        for (int i = 0; i < pagecount; i++) {
-            Map<String, Integer> listParam = new HashMap<>();
-            listParam.put("pg", i);
-            ResponseEntity<CollectListResult> responseEntity = restTemplate.getForEntity(listUrl, CollectListResult.class, listParam);
-            if (responseEntity.getBody() == null) {
-                continue;
-            }
-            List<CollectDetail> list = responseEntity.getBody().getList();
-            List<Integer> idList = list.stream().map(CollectDetail::getVod_id).collect(Collectors.toList());
-            String detailUrl = sourceConfig.getDetailUrl();
-            Map<String, List<Integer>> detailParam = new HashMap<>();
-            detailParam.put("ids", idList);
-            ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate.getForEntity(detailUrl, CollectDetailResult.class, detailParam);
+        for (int i = 1; i <= pageCount; i++) {
+            Map<String, Integer> detailParam = new HashMap<>();
+            detailParam.put("pg", i);
+            ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate
+                    .getForEntity(sourceConfig.getDetailUrl() + "&pg={pg}", CollectDetailResult.class, detailParam);
             CollectDetailResult detailResult = detailResultResponseEntity.getBody();
             if (detailResult == null) {
                 continue;
@@ -104,7 +104,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
                         "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，采集成功！");
             }
             // @todo 仅供测试结束使用
-            if (i == 3) {
+            if (i == 4) {
                 return;
             }
             if (movies.size() == 0) {
@@ -115,6 +115,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         }
     }
 
+    /**
+     * 获取当前采集源的分类映射关系
+     * @param collectId
+     * @return
+     */
     private Map<Integer, Integer> getClassMapping(Integer collectId) {
         List<ClassMapping> classMappingList = classMappingMapper.selectList(new QueryWrapper<ClassMapping>().eq("source_id", collectId));
         Map<Integer, Integer> result = new HashMap<>();
@@ -124,6 +129,12 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return result;
     }
 
+    /**
+     * 生成movie
+     * @param collectDetail
+     * @param classMapping
+     * @return
+     */
     private Movie generateMovie(CollectDetail collectDetail, Map<Integer, Integer> classMapping) {
         Movie movie = new Movie();
         movie.setMvName(collectDetail.getVod_name());
@@ -134,9 +145,10 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         }
         movie.setMvType(classMapping.get(collectDetail.getType_id()));
         movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ? MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
-        movie.setMvYear(collectDetail.getVod_year() == null ? 1980 : Integer.parseInt(collectDetail.getVod_year()));
+        movie.setMvYear(extractNumber(collectDetail.getVod_year()));
         movie.setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
         movie.setUpdateTime(new Date());
+        movie.setUpdateInfo(extractNumber(collectDetail.getVod_remarks()));
         movie.setDescription(collectDetail.getVod_content());
         movie.setActorList(collectDetail.getVod_actor());
         movie.setDirectorList(collectDetail.getVod_director());
@@ -148,12 +160,32 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return movie;
     }
 
+    private Integer extractNumber(String target) {
+        String REGEX = "[^0-9]";
+        String result = Pattern.compile(REGEX).matcher(target).replaceAll("").trim();
+        if (StringUtils.isNotBlank(result)) {
+            return Integer.parseInt(result);
+        }
+        return null;
+    }
+
+    /**
+     * 生成 movieId
+     * @return
+     */
     private int generateMovieId() {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Long movieId = valueOperations.increment(MOVIE_ID);
         return movieId.intValue();
     }
 
+    /**
+     * 生成播放列表
+     * @param collectDetail
+     * @param movieId
+     * @param dto
+     * @return
+     */
     private Playlist generatePlaylist(CollectDetail collectDetail, Integer movieId, MvCollectDTO dto) {
         Playlist playlist = new Playlist();
         playlist.setMovieId(movieId);
@@ -164,6 +196,16 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         playlist.setSeparatorNote(collectDetail.getVod_play_note());
         playlist.setUpdateTime(DateUtil.parse(collectDetail.getVod_time(), DatePattern.NORM_DATETIME_PATTERN));
         return playlist;
+    }
+
+    /**
+     * 分页列表
+     * @param mvPageDTO
+     * @return
+     */
+    @Override
+    public Page<MvPageVO> pageMovie(MvPageDTO mvPageDTO) {
+        return baseMapper.pageMovie(mvPageDTO);
     }
 
 }

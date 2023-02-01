@@ -29,6 +29,8 @@ public class Movie {
 
     private Date updateTime;
 
+    private Integer updateInfo;
+
     private String description;
 
     private String actorList;
