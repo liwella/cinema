@@ -1,4 +1,4 @@
-package com.liwell.cinema.controller;
+package com.liwell.cinema.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
