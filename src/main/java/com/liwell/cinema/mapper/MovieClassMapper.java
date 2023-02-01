@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovieClassMapper extends BaseMapper<MovieClass> {
 
-
+    int getMaxSort(int level);
 
 }

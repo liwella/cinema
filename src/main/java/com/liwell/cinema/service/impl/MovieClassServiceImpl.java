@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.dto.MovieClassAddDTO;
 import com.liwell.cinema.domain.entity.MovieClass;
 import com.liwell.cinema.domain.vo.MovieClassListVO;
 import com.liwell.cinema.mapper.MovieClassMapper;
@@ -40,4 +41,26 @@ public class MovieClassServiceImpl extends ServiceImpl<MovieClassMapper, MovieCl
         return result;
     }
 
+    @Override
+    public Boolean addMovieClass(MovieClassAddDTO dto) {
+        int sort;
+        int level;
+        Integer parentNumber = null;
+        if (dto.getParent() == null) {
+            level = 0;
+            sort = baseMapper.getMaxSort(level);
+        } else {
+            MovieClass parent = baseMapper.selectOne(new QueryWrapper<MovieClass>().eq("parent", dto.getParent()));
+            level = parent.getLevel() + 1;
+            sort = baseMapper.getMaxSort(level);
+            parentNumber = dto.getParent();
+        }
+        MovieClass movieClass = new MovieClass();
+        movieClass.setName(dto.getName());
+        movieClass.setSort(++sort);
+        movieClass.setParent(parentNumber);
+        movieClass.setLevel(level);
+        baseMapper.insert(movieClass);
+        return true;
+    }
 }

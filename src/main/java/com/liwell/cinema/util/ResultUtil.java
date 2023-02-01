@@ -31,7 +31,6 @@ public class ResultUtil {
         return success(ResultEnum.SUCCESS, data);
     }
 
-
     public static <T> Result<T> fail(String msg) {
         return result(ResultEnum.FAIL.getValue(), msg, null);
     }
@@ -42,6 +41,17 @@ public class ResultUtil {
 
     public static <T> Result<T> fail(ResultEnum resultEnum) {
         return fail(resultEnum, null);
+    }
+
+    public static <T> Result<T> fail() {
+        return fail(ResultEnum.FAIL);
+    }
+
+    public static <T> Result<T> trueOrFalse(Boolean result) {
+        if (result) {
+            return success();
+        }
+        return fail();
     }
 
 }
