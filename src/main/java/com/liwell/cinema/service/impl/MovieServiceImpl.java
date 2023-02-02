@@ -82,7 +82,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             throw new ResultException(ResultEnum.THIRD_INTERFACE_ERROR);
         }
         Integer pageCount = pageCountResponse.getBody().getPagecount();
-        Map<Integer, Integer> classMapping = getClassMapping(mvCollectDTO.getCollectId());
+        Map<Integer, Integer> categoryMapping = getCategoryMapping(mvCollectDTO.getCollectId());
         for (int i = 1; i <= pageCount; i++) {
             Map<String, Integer> detailParam = new HashMap<>();
             detailParam.put("pg", i);
@@ -96,7 +96,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             List<Movie> movies = new ArrayList<>();
             List<Playlist> playlists = new ArrayList<>();
             for (CollectDetail collectDetail : collectDetails) {
-                Movie movie = generateMovie(collectDetail, classMapping);
+                Movie movie = generateMovie(collectDetail, categoryMapping);
                 if (movie == null) {
                     log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
                             "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
@@ -120,11 +120,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
      * @param collectId
      * @return
      */
-    private Map<Integer, Integer> getClassMapping(Integer collectId) {
+    private Map<Integer, Integer> getCategoryMapping(Integer collectId) {
         List<CategoryMapping> categoryMappingList = categoryMappingMapper.selectList(new QueryWrapper<CategoryMapping>().eq("source_id", collectId));
         Map<Integer, Integer> result = new HashMap<>();
         for (CategoryMapping categoryMapping : categoryMappingList) {
-            result.put(categoryMapping.getSourceTypeId(), categoryMapping.getMovieClassId());
+            result.put(categoryMapping.getSourceTypeId(), categoryMapping.getCategoryId());
         }
         return result;
     }
@@ -132,16 +132,16 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     /**
      * 生成movie
      * @param collectDetail
-     * @param classMapping
+     * @param categoryMapping
      * @return
      */
-    private Movie generateMovie(CollectDetail collectDetail, Map<Integer, Integer> classMapping) {
+    private Movie generateMovie(CollectDetail collectDetail, Map<Integer, Integer> categoryMapping) {
         Movie movie = new Movie();
         movie.setMvName(collectDetail.getVod_name());
-        if (classMapping.get(collectDetail.getType_id()) == null) {
+        if (categoryMapping.get(collectDetail.getType_id()) == null) {
             return null;
         }
-        movie.setMvType(classMapping.get(collectDetail.getType_id()));
+        movie.setMvType(categoryMapping.get(collectDetail.getType_id()));
         movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ?
                 MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
         movie.setMvYear(extractNumber(collectDetail.getVod_year()));

@@ -13,9 +13,9 @@ public class CategoryMapping {
 
     private Integer id;
 
-    private Integer movieClassId;
+    private Integer categoryId;
 
-    private String movieClassName;
+    private String categoryName;
 
     private Integer sourceId;
 

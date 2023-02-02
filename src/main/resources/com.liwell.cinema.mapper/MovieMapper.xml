@@ -55,7 +55,7 @@
             mv.id,
             mv.mv_name mvName,
             mv.mv_type mvType,
-            mc.name mvTypeName,
+            cg.name mvTypeName,
             mv.mv_area mvArea,
             mv.mv_year mvYear,
             mv.update_time updateTime,
@@ -66,8 +66,8 @@
             mv.picture picture,
             mv.score score
         from movie mv
-        left join movie_class mc
-        on mv.mv_type=mc.id
+        left join category cg
+        on mv.mv_type=cg.id
         where mv.state=1 and mv.id=#{id}
     </select>
 

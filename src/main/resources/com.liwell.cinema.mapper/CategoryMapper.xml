@@ -3,7 +3,7 @@
 <mapper namespace="com.liwell.cinema.mapper.CategoryMapper">
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select max(sort) from movie_class
+        select max(sort) from category
         <where>
             <if test="parent==null">
                 parent is null
