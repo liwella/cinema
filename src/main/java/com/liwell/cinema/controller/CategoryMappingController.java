@@ -2,6 +2,8 @@ package com.liwell.cinema.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liwell.cinema.domain.dto.CategoryMappingListDTO;
+import com.liwell.cinema.domain.dto.CategoryMappingUpdateDTO;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.CategoryMapping;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.service.CategoryMappingService;
@@ -32,6 +34,17 @@ public class CategoryMappingController {
     public Result<List<CategoryMapping>> listCategoryMapping(@RequestBody @Valid CategoryMappingListDTO dto) {
         return ResultUtil.success(categoryMappingService.list(
                 new QueryWrapper<CategoryMapping>().eq("source_id", dto.getSourceId())));
+    }
+
+    @PostMapping("/addOrUpdate")
+    public Result addOrUpdate(@RequestBody @Valid CategoryMappingUpdateDTO dto) {
+        return ResultUtil.trueOrFalse(categoryMappingService.addOrUpdate(dto));
+    }
+
+    @PostMapping("/delete")
+    public Result deleteCategoryMapping(@RequestBody IdDTO idDTO) {
+        categoryMappingService.removeById(idDTO.getId());
+        return ResultUtil.success();
     }
 
 }

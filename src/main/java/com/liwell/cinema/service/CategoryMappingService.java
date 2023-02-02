@@ -1,6 +1,7 @@
 package com.liwell.cinema.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.liwell.cinema.domain.dto.CategoryMappingUpdateDTO;
 import com.liwell.cinema.domain.entity.CategoryMapping;
 
 /**
@@ -11,6 +12,6 @@ import com.liwell.cinema.domain.entity.CategoryMapping;
  */
 public interface CategoryMappingService extends IService<CategoryMapping> {
 
-
+    Boolean addOrUpdate(CategoryMappingUpdateDTO dto);
 
 }
