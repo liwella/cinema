@@ -1,13 +1,17 @@
 package com.liwell.cinema.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.liwell.cinema.domain.dto.CategoryAddDTO;
 import com.liwell.cinema.domain.dto.CategoryMoveDTO;
 import com.liwell.cinema.domain.dto.CategoryUpdateDTO;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.Category;
+import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.CategoryListVO;
+import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.CategoryService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +70,8 @@ public class CategoryController {
      * @param dto
      * @return
      */
-    @PostMapping("/updateMovieClass")
-    public Result updateMovieClass(@RequestBody @Valid CategoryUpdateDTO dto) {
+    @PostMapping("/updateCategory")
+    public Result updateCategory(@RequestBody @Valid CategoryUpdateDTO dto) {
         categoryService.update(new UpdateWrapper<Category>()
                 .set("name", dto.getName()).eq("id", dto.getId()));
         return ResultUtil.success();
@@ -78,8 +82,12 @@ public class CategoryController {
      * @param dto
      * @return
      */
-    @PostMapping("deleteMovieClass")
-    public Result deleteMovieClass(@RequestBody IdDTO dto) {
+    @PostMapping("/deleteCategory")
+    public Result deleteCategory(@RequestBody IdDTO dto) {
+        List<Category> children = categoryService.list(new QueryWrapper<Category>().in("parent", dto.getIds()));
+        if (CollectionUtil.isNotEmpty(children)) {
+            throw new ResultException(ResultEnum.CHILDREN_EXISTS);
+        }
         return ResultUtil.trueOrFalse(categoryService.removeByIds(dto.getIds()));
     }
 
