@@ -9,16 +9,16 @@ import lombok.Data;
  * @date Created on 2023/1/30
  */
 @Data
-public class ClassMapping {
+public class Category {
 
     private Integer id;
 
-    private Integer movieClassId;
+    private String name;
 
-    private String movieClassName;
+    private Integer sort;
 
-    private Integer sourceId;
+    private Integer parent;
 
-    private Integer sourceTypeId;
+    private Integer level;
 
 }

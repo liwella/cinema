@@ -1,6 +1,6 @@
 package com.liwell.cinema.domain.enums;
 
-import com.baomidou.mybatisplus.annotation.IEnum;
+import lombok.Getter;
 
 /**
  * Description:
@@ -8,7 +8,8 @@ import com.baomidou.mybatisplus.annotation.IEnum;
  * @author Li
  * @date Created on 2023/1/24
  */
-public enum ResultEnum implements IEnum<Integer> {
+@Getter
+public enum ResultEnum implements BaseEnum {
 
     SUCCESS(0, "操作成功"),
     FAIL(-1, "操作失败"),
@@ -25,15 +26,6 @@ public enum ResultEnum implements IEnum<Integer> {
     ResultEnum(Integer value, String message) {
         this.value = value;
         this.message = message;
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
 }

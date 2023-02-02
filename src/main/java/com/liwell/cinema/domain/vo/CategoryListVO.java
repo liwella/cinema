@@ -11,7 +11,7 @@ import java.util.List;
  * @date: Created on 2023/02/01
  */
 @Data
-public class MovieClassListVO {
+public class CategoryListVO {
 
     private Integer id;
 
@@ -21,6 +21,6 @@ public class MovieClassListVO {
 
     private Integer level;
 
-    private List<MovieClassListVO> children;
+    private List<CategoryListVO> children;
 
 }

@@ -21,4 +21,6 @@ public class MvPageVO {
 
     private String actorList;
 
+    private Double score;
+
 }

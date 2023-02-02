@@ -2,9 +2,11 @@ package com.liwell.cinema.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.MvCollectDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.entity.Movie;
+import com.liwell.cinema.domain.vo.MovieDetailVO;
 import com.liwell.cinema.domain.vo.MvPageVO;
 
 /**
@@ -18,5 +20,7 @@ public interface MovieService extends IService<Movie> {
     void collect(MvCollectDTO mvCollectDTO);
 
     Page<MvPageVO> pageMovie(MvPageDTO mvPageDTO);
+
+    MovieDetailVO getMovieDetail(IdDTO dto);
 
 }

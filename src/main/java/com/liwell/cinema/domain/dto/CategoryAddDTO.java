@@ -11,9 +11,11 @@ import javax.validation.constraints.NotNull;
  * @date: Created on 2023/02/01
  */
 @Data
-public class ClassMappingListDTO {
+public class CategoryAddDTO {
 
-    @NotNull(message = "采集源id不能为空")
-    private Integer sourceId;
+    @NotNull(message = "分类名称不能为空")
+    private String name;
+
+    private Integer parent;
 
 }

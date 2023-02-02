@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
  * @date Created on 2023/2/1
  */
 @Data
-public class MovieClassMoveDTO {
+public class CategoryMoveDTO {
 
     @NotNull(message = "分类id不能为空")
     private Integer id;

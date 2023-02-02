@@ -5,9 +5,10 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.MvCollectDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
-import com.liwell.cinema.domain.entity.ClassMapping;
+import com.liwell.cinema.domain.entity.CategoryMapping;
 import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.entity.Playlist;
 import com.liwell.cinema.domain.entity.SourceConfig;
@@ -17,9 +18,10 @@ import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.po.CollectDetail;
 import com.liwell.cinema.domain.po.CollectDetailResult;
 import com.liwell.cinema.domain.po.CollectListResult;
+import com.liwell.cinema.domain.vo.MovieDetailVO;
 import com.liwell.cinema.domain.vo.MvPageVO;
 import com.liwell.cinema.exception.ResultException;
-import com.liwell.cinema.mapper.ClassMappingMapper;
+import com.liwell.cinema.mapper.CategoryMappingMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
 import com.liwell.cinema.mapper.SourceConfigMapper;
@@ -55,7 +57,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Autowired
     private PlaylistMapper playlistMapper;
     @Autowired
-    private ClassMappingMapper classMappingMapper;
+    private CategoryMappingMapper categoryMappingMapper;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -96,16 +98,14 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             for (CollectDetail collectDetail : collectDetails) {
                 Movie movie = generateMovie(collectDetail, classMapping);
                 if (movie == null) {
+                    log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
+                            "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
                     continue;
                 }
                 movies.add(movie);
                 playlists.add(generatePlaylist(collectDetail, movie.getId(), mvCollectDTO));
                 log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
                         "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，采集成功！");
-            }
-            // @todo 仅供测试结束使用
-            if (i == 4) {
-                return;
             }
             if (movies.size() == 0) {
                 continue;
@@ -121,10 +121,10 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
      * @return
      */
     private Map<Integer, Integer> getClassMapping(Integer collectId) {
-        List<ClassMapping> classMappingList = classMappingMapper.selectList(new QueryWrapper<ClassMapping>().eq("source_id", collectId));
+        List<CategoryMapping> categoryMappingList = categoryMappingMapper.selectList(new QueryWrapper<CategoryMapping>().eq("source_id", collectId));
         Map<Integer, Integer> result = new HashMap<>();
-        for (ClassMapping classMapping : classMappingList) {
-            result.put(classMapping.getSourceTypeId(), classMapping.getMovieClassId());
+        for (CategoryMapping categoryMapping : categoryMappingList) {
+            result.put(categoryMapping.getSourceTypeId(), categoryMapping.getMovieClassId());
         }
         return result;
     }
@@ -139,12 +139,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         Movie movie = new Movie();
         movie.setMvName(collectDetail.getVod_name());
         if (classMapping.get(collectDetail.getType_id()) == null) {
-            log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" + collectDetail.getVod_name() + "》，" +
-                    "类型：" + collectDetail.getType_id() + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
             return null;
         }
         movie.setMvType(classMapping.get(collectDetail.getType_id()));
-        movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ? MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
+        movie.setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ?
+                MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
         movie.setMvYear(extractNumber(collectDetail.getVod_year()));
         movie.setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
         movie.setUpdateTime(new Date());
@@ -208,4 +207,17 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return baseMapper.pageMovie(mvPageDTO);
     }
 
+    /**
+     * 获取影片详情
+     * @param dto
+     * @return
+     */
+    @Override
+    public MovieDetailVO getMovieDetail(IdDTO dto) {
+        MovieDetailVO detailVO = baseMapper.getMovieDetail(dto);
+        if (detailVO == null) {
+            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
+        }
+        return detailVO;
+    }
 }

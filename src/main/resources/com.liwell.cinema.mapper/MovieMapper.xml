@@ -45,8 +45,30 @@
             mv_name mvName,
             update_info updateInfo,
             picture picture,
-            actor_list actorList
+            actor_list actorList,
+            score score
         from movie
+    </select>
+
+    <select id="getMovieDetail" parameterType="com.liwell.cinema.domain.dto.IdDTO" resultType="com.liwell.cinema.domain.vo.MovieDetailVO">
+        select
+            mv.id,
+            mv.mv_name mvName,
+            mv.mv_type mvType,
+            mc.name mvTypeName,
+            mv.mv_area mvArea,
+            mv.mv_year mvYear,
+            mv.update_time updateTime,
+            mv.update_info updateInfo,
+            mv.description description,
+            mv.actor_list actorList,
+            mv.director_list directorList,
+            mv.picture picture,
+            mv.score score
+        from movie mv
+        left join movie_class mc
+        on mv.mv_type=mc.id
+        where mv.state=1 and mv.id=#{id}
     </select>
 
 </mapper>

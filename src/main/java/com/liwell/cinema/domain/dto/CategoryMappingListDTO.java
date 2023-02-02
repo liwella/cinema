@@ -11,11 +11,9 @@ import javax.validation.constraints.NotNull;
  * @date: Created on 2023/02/01
  */
 @Data
-public class MovieClassAddDTO {
+public class CategoryMappingListDTO {
 
-    @NotNull(message = "分类名称不能为空")
-    private String name;
-
-    private Integer parent;
+    @NotNull(message = "采集源id不能为空")
+    private Integer sourceId;
 
 }

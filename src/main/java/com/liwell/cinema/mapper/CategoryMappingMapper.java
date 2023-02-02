@@ -1,20 +1,20 @@
 package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.liwell.cinema.domain.entity.MovieClass;
+import com.liwell.cinema.domain.entity.CategoryMapping;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
  * Description:
  *
- * @author: litianyi
- * @date: Created on 2023/02/01
+ * @author Li
+ * @date Created on 2023/1/30
  */
 @Mapper
 @Repository
-public interface MovieClassMapper extends BaseMapper<MovieClass> {
+public interface CategoryMappingMapper extends BaseMapper<CategoryMapping> {
 
-    Integer getMaxSort(Integer parent);
+
 
 }

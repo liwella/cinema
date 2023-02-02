@@ -1,6 +1,6 @@
 package com.liwell.cinema.domain.enums;
 
-import com.baomidou.mybatisplus.annotation.IEnum;
+import lombok.Getter;
 
 /**
  * Description:
@@ -8,7 +8,8 @@ import com.baomidou.mybatisplus.annotation.IEnum;
  * @author Li
  * @date Created on 2023/1/24
  */
-public enum MvAreaEnum implements IEnum<Integer> {
+@Getter
+public enum MvAreaEnum implements BaseEnum {
 
     UNKNOWN(-1, "未知"),
     CHINESE(1, "中国大陆");
@@ -20,15 +21,6 @@ public enum MvAreaEnum implements IEnum<Integer> {
     MvAreaEnum(Integer value, String description) {
         this.value = value;
         this.description = description;
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
 }
