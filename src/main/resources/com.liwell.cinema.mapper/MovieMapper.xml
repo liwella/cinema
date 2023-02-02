@@ -48,6 +48,21 @@
             actor_list actorList,
             score score
         from movie
+        <where>
+            <if test="mvName!=null and mvName!=''">
+                and mv_name like concat('%',#{mvName},'%')
+            </if>
+            <if test="mvType!=null">
+                and mv_type=#{mvType}
+            </if>
+            <if test="mvArea!=null">
+                and mv_area=#{mvArea}
+            </if>
+            <if test="mvYear!=null">
+                and mv_year=#{mvYear}
+            </if>
+        </where>
+
     </select>
 
     <select id="getMovieDetail" parameterType="com.liwell.cinema.domain.dto.IdDTO" resultType="com.liwell.cinema.domain.vo.MovieDetailVO">

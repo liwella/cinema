@@ -12,7 +12,9 @@ import lombok.Getter;
 public enum MvAreaEnum implements BaseEnum {
 
     UNKNOWN(-1, "未知"),
-    CHINESE(1, "中国大陆");
+    CHINESE(1, "中国大陆"),
+    HKM(2, "港澳"),
+    TAIWAN(3, "台湾");
 
     private Integer value;
 
