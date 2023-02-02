@@ -1,6 +1,6 @@
 package com.liwell.cinema.domain.po;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -14,8 +14,8 @@ import java.util.List;
 @Data
 public class CollectListResult extends CollectResult {
 
-    @JSONField(name = "class")
-    private List<CollectClass> collectClasses;
+    @JsonProperty("class")
+    private List<CollectCategory> collectCategories;
 
     private List<CollectDetail> list;
 

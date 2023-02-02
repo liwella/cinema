@@ -23,7 +23,7 @@ public class MovieTest {
     @Test
     public void collect() {
         MvCollectDTO mvCollectDTO = new MvCollectDTO();
-        mvCollectDTO.setCollectId(1);
+        mvCollectDTO.setSourceId(1);
         movieService.collect(mvCollectDTO);
     }
 

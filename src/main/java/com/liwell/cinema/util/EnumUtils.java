@@ -1,6 +1,6 @@
 package com.liwell.cinema.util;
 
-import com.baomidou.mybatisplus.annotation.IEnum;
+import com.liwell.cinema.domain.enums.BaseEnum;
 
 /**
  * Description:
@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.annotation.IEnum;
  */
 public class EnumUtils {
 
-    public static <T extends IEnum> T get(Class<T> c, Object value) {
+    public static <T extends BaseEnum> T get(Class<T> c, Object value) {
         for (T e : c.getEnumConstants()) {
             if (e.getValue().equals(value)) {
                 return e;

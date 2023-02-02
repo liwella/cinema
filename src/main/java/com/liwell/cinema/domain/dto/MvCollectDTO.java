@@ -16,6 +16,6 @@ public class MvCollectDTO {
     private Integer time;
 
     @NotNull
-    private Integer collectId;
+    private Integer sourceId;
 
 }

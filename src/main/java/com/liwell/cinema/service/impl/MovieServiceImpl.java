@@ -24,7 +24,7 @@ import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.CategoryMappingMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
-import com.liwell.cinema.mapper.SourceConfigMapper;
+import com.liwell.cinema.remote.SourceService;
 import com.liwell.cinema.service.MovieService;
 import com.liwell.cinema.util.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -53,11 +52,11 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     private final String MOVIE_ID = "movie_id";
 
     @Autowired
-    private SourceConfigMapper sourceConfigMapper;
-    @Autowired
     private PlaylistMapper playlistMapper;
     @Autowired
     private CategoryMappingMapper categoryMappingMapper;
+    @Autowired
+    private SourceService sourceService;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -70,25 +69,12 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Override
     @Transactional
     public void collect(MvCollectDTO mvCollectDTO) {
-        SourceConfig sourceConfig = sourceConfigMapper.selectOne(
-                new QueryWrapper<SourceConfig>().eq("id", mvCollectDTO.getCollectId()).eq("state", 1));
-        if (sourceConfig == null) {
-            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
-        }
-        String listUrl = sourceConfig.getListUrl();
-        ResponseEntity<CollectListResult> pageCountResponse = restTemplate
-                .getForEntity(listUrl, CollectListResult.class, new HashMap<>());
-        if (pageCountResponse.getBody() == null || pageCountResponse.getStatusCodeValue() != 200) {
-            throw new ResultException(ResultEnum.THIRD_INTERFACE_ERROR);
-        }
-        Integer pageCount = pageCountResponse.getBody().getPagecount();
-        Map<Integer, Integer> categoryMapping = getCategoryMapping(mvCollectDTO.getCollectId());
+        SourceConfig sourceConfig = sourceService.getSourceConfig(mvCollectDTO.getSourceId());
+        CollectListResult baseInfoResult = sourceService.sourceBaseInfo(sourceConfig.getId());
+        Integer pageCount = baseInfoResult.getPagecount();
+        Map<Integer, Integer> categoryMapping = getCategoryMapping(sourceConfig.getId());
         for (int i = 1; i <= pageCount; i++) {
-            Map<String, Integer> detailParam = new HashMap<>();
-            detailParam.put("pg", i);
-            ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate
-                    .getForEntity(sourceConfig.getDetailUrl() + "&pg={pg}", CollectDetailResult.class, detailParam);
-            CollectDetailResult detailResult = detailResultResponseEntity.getBody();
+            CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), i);
             if (detailResult == null) {
                 continue;
             }
@@ -188,7 +174,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     private Playlist generatePlaylist(CollectDetail collectDetail, Integer movieId, MvCollectDTO dto) {
         Playlist playlist = new Playlist();
         playlist.setMovieId(movieId);
-        playlist.setSourceId(dto.getCollectId());
+        playlist.setSourceId(dto.getSourceId());
         playlist.setSourceMovieId(collectDetail.getVod_id());
         playlist.setPlayType(collectDetail.getVod_play_from());
         playlist.setPlayUrl(collectDetail.getVod_play_url());
