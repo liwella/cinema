@@ -1,10 +1,16 @@
 package com.liwell.cinema.domain.entity;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import com.liwell.cinema.domain.enums.MvAreaEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
+import com.liwell.cinema.domain.po.CollectDetail;
+import com.liwell.cinema.util.EnumUtils;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Description:
@@ -44,5 +50,31 @@ public class Movie {
     private String screenPicture;
 
     private Double score;
+
+    public Movie init(CollectDetail collectDetail) {
+        setMvName(collectDetail.getVod_name());
+        setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ?
+                MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
+        setMvYear(extractNumber(collectDetail.getVod_year()));
+        setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
+        setUpdateTime(new Date());
+        setUpdateInfo(extractNumber(collectDetail.getVod_remarks()));
+        setDescription(collectDetail.getVod_content());
+        setActorList(collectDetail.getVod_actor());
+        setDirectorList(collectDetail.getVod_director());
+        setState(StateEnum.VALID);
+        setPicture(collectDetail.getVod_pic());
+        setScore(Double.valueOf(collectDetail.getVod_douban_score()));
+        return this;
+    }
+
+    private Integer extractNumber(String target) {
+        String REGEX = "[^0-9]";
+        String result = Pattern.compile(REGEX).matcher(target).replaceAll("").trim();
+        if (StringUtils.isNotBlank(result)) {
+            return Integer.parseInt(result);
+        }
+        return null;
+    }
 
 }

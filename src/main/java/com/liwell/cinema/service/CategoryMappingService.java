@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.CategoryMappingUpdateDTO;
 import com.liwell.cinema.domain.entity.CategoryMapping;
 
+import java.util.Map;
+
 /**
  * Description:
  *
@@ -13,5 +15,7 @@ import com.liwell.cinema.domain.entity.CategoryMapping;
 public interface CategoryMappingService extends IService<CategoryMapping> {
 
     Boolean addOrUpdate(CategoryMappingUpdateDTO dto);
+
+    Map<Integer, Integer> getCategoryMapping(Integer sourceId);
 
 }

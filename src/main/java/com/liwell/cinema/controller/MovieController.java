@@ -2,7 +2,6 @@ package com.liwell.cinema.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.IdDTO;
-import com.liwell.cinema.domain.dto.MvCollectDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.MovieDetailVO;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 /**
  * Description:
@@ -29,12 +26,6 @@ public class MovieController {
 
     @Autowired
     private MovieService movieService;
-
-    @PostMapping("/collect")
-    public Result collect(@RequestBody @Valid MvCollectDTO dto) {
-        movieService.collect(dto);
-        return ResultUtil.success();
-    }
 
     @PostMapping("/pageMovie")
     public Result<Page<MvPageVO>> pageMovie(@RequestBody MvPageDTO mvPageDTO) {

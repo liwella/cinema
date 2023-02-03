@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +52,21 @@ public class CategoryMappingServiceImpl extends ServiceImpl<CategoryMappingMappe
         baseMapper.update(null, new UpdateWrapper<CategoryMapping>()
                 .set("category_id", category.getId()).set("category_name", category.getName()).allEq(params));
         return true;
+    }
+
+    /**
+     * 获取当前采集源的分类映射关系
+     * @param collectId
+     * @return
+     */
+    public Map<Integer, Integer> getCategoryMapping(Integer collectId) {
+        List<CategoryMapping> categoryMappingList = baseMapper.selectList(
+                new QueryWrapper<CategoryMapping>().eq("source_id", collectId));
+        Map<Integer, Integer> result = new HashMap<>();
+        for (CategoryMapping categoryMapping : categoryMappingList) {
+            result.put(categoryMapping.getSourceTypeId(), categoryMapping.getCategoryId());
+        }
+        return result;
     }
 
 }

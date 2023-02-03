@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public enum CollectTaskStateEnum implements BaseEnum {
 
-    NOT_START(0, "未开始"),
+    NOT_START(0, "待开始"),
     IN_EXECUTE(1, "执行中"),
     SUSPEND(2, "已暂停"),
     STOP(3, "已停止"),
