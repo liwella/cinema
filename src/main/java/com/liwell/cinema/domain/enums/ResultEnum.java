@@ -20,7 +20,8 @@ public enum ResultEnum implements BaseEnum {
     THIRD_INTERFACE_ERROR(1100, "调用第三方接口出错！"),
     ALREADY_TOP(1101, "已是最上层/底层节点，无法移动"),
     CHILDREN_EXISTS(1102, "有节点存在子分类未删除，请先删除子分类"),
-    TASK_IN_EXECUTE(1103, "采集源当前有采集任务在执行中，请勿重复执行")
+    TASK_IN_EXECUTE(1103, "采集源当前有采集任务在执行中，请勿重复执行"),
+    TASK_STATE_ERROR(1104, "当前任务状态无法执行")
     ;
 
     private Integer value;

@@ -13,4 +13,35 @@
         </foreach>
     </insert>
 
+    <select id="pageCollectTask" resultType="com.liwell.cinema.domain.vo.CollectTaskPageVO">
+        select
+            ct.id,
+            ct.source_id sourceId,
+            sc.name sourceName,
+            ct.duration duration,
+            ct.create_time createTime,
+            ct.start_time startTime,
+            ct.pause_time pauseTime,
+            ct.stop_time stopTime,
+            ct.state state,
+            ct.finish_time finishTime
+        from collect_task ct
+        left join source_config sc
+        on ct.source_id=sc.id
+        <where>
+            <if test="state!=null">
+                and ct.state=#{state}
+            </if>
+            <if test="sourceId!=null">
+                and ct.source_id=#{sourceId}
+            </if>
+            <if test="startTime!=null">
+                and ct.create_time>=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and ct.create_time&lt;=#{endTime}
+            </if>
+        </where>
+    </select>
+
 </mapper>

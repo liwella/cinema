@@ -13,7 +13,7 @@ public enum CollectTaskStateEnum implements BaseEnum {
 
     NOT_START(0, "待开始"),
     IN_EXECUTE(1, "执行中"),
-    SUSPEND(2, "已暂停"),
+    PAUSE(2, "已暂停"),
     STOP(3, "已停止"),
     FINISHED(4, "已完成")
     ;

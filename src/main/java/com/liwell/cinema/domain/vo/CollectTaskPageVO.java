@@ -1,4 +1,4 @@
-package com.liwell.cinema.domain.entity;
+package com.liwell.cinema.domain.vo;
 
 import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
 import lombok.Data;
@@ -8,15 +8,17 @@ import java.util.Date;
 /**
  * Description:
  *
- * @author: litianyi
- * @date: Created on 2023/02/03
+ * @author Li
+ * @date Created on 2023/2/4
  */
 @Data
-public class CollectTask {
+public class CollectTaskPageVO {
 
     private Integer id;
 
     private Integer sourceId;
+
+    private Integer sourceName;
 
     private Integer duration;
 
@@ -28,18 +30,10 @@ public class CollectTask {
 
     private Date stopTime;
 
-    private Integer currentPage;
-
-    private Integer totalPage;
+    private Integer process;
 
     private CollectTaskStateEnum state;
 
     private Date finishTime;
-
-    public void init(Integer sourceId, Integer duration) {
-        setSourceId(sourceId);
-        setDuration(duration);
-        setCreateTime(new Date());
-    }
 
 }
