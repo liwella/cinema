@@ -37,6 +37,10 @@
              null,
              #{item.score})
         </foreach>
+        on duplicate key update
+            update_time=values(update_time),
+            update_info=values(update_info),
+            score=values(score)
     </insert>
 
     <select id="pageMovie" resultType="com.liwell.cinema.domain.vo.MvPageVO">
@@ -62,7 +66,6 @@
                 and mv_year=#{mvYear}
             </if>
         </where>
-
     </select>
 
     <select id="getMovieDetail" parameterType="com.liwell.cinema.domain.dto.IdDTO" resultType="com.liwell.cinema.domain.vo.MovieDetailVO">

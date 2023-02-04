@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @date Created on 2023/1/29
  */
 @Configuration
-public class RedisConfig {
+public class RedisTemplateConfig {
 
     @Resource
     private RedisConnectionFactory redisConnectionFactory;
@@ -36,6 +36,21 @@ public class RedisConfig {
 
         redisTemplate.setDefaultSerializer(genericJackson2JsonRedisSerializer);
         redisTemplate.setEnableDefaultSerializer(true);
+
+//        Jackson2JsonRedisSerializer<Object> jacksonSeial = new Jackson2JsonRedisSerializer<>(Object.class);
+//        ObjectMapper om = new ObjectMapper();
+//        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+//        jacksonSeial.setObjectMapper(om);
+//        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+//
+//        redisTemplate.setKeySerializer(stringRedisSerializer);
+//        redisTemplate.setValueSerializer(jacksonSeial);
+//        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+//        redisTemplate.setHashValueSerializer(jacksonSeial);
+//
+//        redisTemplate.setDefaultSerializer(jacksonSeial);
+//        redisTemplate.setEnableDefaultSerializer(true);
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;

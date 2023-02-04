@@ -3,6 +3,7 @@ package com.liwell.cinema.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,6 +21,7 @@ import com.liwell.cinema.domain.po.CollectDetailResult;
 import com.liwell.cinema.domain.po.CollectListResult;
 import com.liwell.cinema.domain.vo.CollectTaskPageVO;
 import com.liwell.cinema.exception.ResultException;
+import com.liwell.cinema.helper.RedisHelper;
 import com.liwell.cinema.mapper.CollectTaskMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
@@ -35,6 +37,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +72,8 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
     private TaskExecutor taskExecutor;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private RedisHelper redisHelper;
 
     @Override
     @Transactional
@@ -92,7 +97,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
         return true;
     }
 
-    //    @PostConstruct
+    @PostConstruct
     public void postConstruct() {
         taskExecutor.execute(new TaskScheduling());
     }
@@ -106,12 +111,14 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             while (true) {
                 try {
                     List<CollectTask> collectTaskList = baseMapper.selectList(
-                            new QueryWrapper<CollectTask>().in("state", 0, 2));
+                            new QueryWrapper<CollectTask>().in("state", 0));
                     for (CollectTask collectTask : collectTaskList) {
                         taskExecutor.execute(new CollectThread(collectTask));
                     }
                 } catch (Exception e) {
                     log.error("采集任务调度出错：", e);
+                } finally {
+                    ThreadUtil.sleep(10000);
                 }
             }
         }
@@ -134,7 +141,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             collectTaskMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("state", CollectTaskStateEnum.IN_EXECUTE).eq("id", collectTask.getId()));
             ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
-            opsForValue.set(COLLECT_STATE_KEY + collectTask.getSourceId(), CollectTaskStateEnum.IN_EXECUTE);
+            opsForValue.set(COLLECT_STATE_KEY + collectTask.getId(), CollectTaskStateEnum.IN_EXECUTE.getValue());
             SourceConfig sourceConfig = sourceService.getSourceConfig(collectTask.getSourceId());
             CollectListResult baseInfoResult = sourceService.sourceBaseInfo(sourceConfig.getId());
             Integer pageCount = baseInfoResult.getPagecount();
@@ -145,52 +152,58 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                         .set("start_time", new Date()).eq("id", collectTask.getId()));
             }
             for (; page <= pageCount; page++) {
-                log.info("当前采集到第：" + page + " 页");
-                CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), page);
-                if (detailResult == null) {
-                    continue;
-                }
-                List<CollectDetail> collectDetails = detailResult.getList();
-                List<Movie> movies = new ArrayList<>();
-                List<Playlist> playlists = new ArrayList<>();
-                for (CollectDetail collectDetail : collectDetails) {
-                    if (categoryMapping.get(collectDetail.getType_id()) == null) {
-                        log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
-                                collectDetail.getVod_name() + "》，类型：" + collectDetail.getType_id()
-                                + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
+                try {
+                    log.info("当前采集到第：" + page + " 页");
+                    CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), page);
+                    if (detailResult == null) {
                         continue;
                     }
-                    Movie movie = new Movie().init(collectDetail);
-                    movie.setId(movieService.generateMovieId());
-                    movie.setMvType(categoryMapping.get(collectDetail.getType_id()));
-                    movies.add(movie);
-                    playlists.add(generatePlaylist(collectDetail, movie.getId(), collectTask.getSourceId()));
-                    log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
-                            collectDetail.getVod_name() + "》，类型：" + collectDetail.getType_id()
-                            + "-" + collectDetail.getType_name() + "，采集成功！");
-                }
-                opsForValue.set(COLLECT_PROCESS_KEY + collectTask.getSourceId(), page + ":" + pageCount);
-                if (movies.size() == 0) {
-                    continue;
-                }
-                movieMapper.insertMovies(movies);
-                playlistMapper.insertPlaylist(playlists);
-                CollectTaskStateEnum taskState = (CollectTaskStateEnum) opsForValue.get(COLLECT_STATE_KEY + collectTask.getSourceId());
-                if (taskState == CollectTaskStateEnum.PAUSE || taskState == CollectTaskStateEnum.STOP) {
-                    collectTaskMapper.update(null, new UpdateWrapper<CollectTask>()
-                            .set("current_page", page).set("total_page", pageCount).eq("id", collectTask.getId()));
-                    if (taskState == CollectTaskStateEnum.STOP) {
-                        redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getSourceId());
-                        redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getSourceId());
+                    List<CollectDetail> collectDetails = detailResult.getList();
+                    List<Movie> movies = new ArrayList<>();
+                    List<Playlist> playlists = new ArrayList<>();
+                    for (CollectDetail collectDetail : collectDetails) {
+                        if (categoryMapping.get(collectDetail.getType_id()) == null) {
+                            log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
+                                    collectDetail.getVod_name() + "》，类型：" + collectDetail.getType_id()
+                                    + "-" + collectDetail.getType_name() + "，未匹配到对应类型，采集失败，跳过");
+                            continue;
+                        }
+                        Movie movie = new Movie().init(collectDetail);
+                        movie.setId(movieService.generateMovieId());
+                        movie.setMvType(categoryMapping.get(collectDetail.getType_id()));
+                        movies.add(movie);
+                        playlists.add(generatePlaylist(collectDetail, movie.getId(), collectTask.getSourceId()));
+                        log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
+                                collectDetail.getVod_name() + "》，类型：" + collectDetail.getType_id()
+                                + "-" + collectDetail.getType_name() + "，采集成功！");
                     }
-                    return;
+                    opsForValue.set(COLLECT_PROCESS_KEY + collectTask.getId(), page + ":" + pageCount);
+                    if (movies.size() == 0) {
+                        continue;
+                    }
+                    movieMapper.insertMovies(movies);
+                    playlistMapper.insertPlaylist(playlists);
+                    CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, collectTask.getId());
+                    if (taskState == CollectTaskStateEnum.PAUSE || taskState == CollectTaskStateEnum.STOP) {
+                        log.info("接收到状态指令，采集任务：" + collectTask.getId() + " 停止！");
+                        collectTaskMapper.update(null, new UpdateWrapper<CollectTask>()
+                                .set("current_page", page).set("total_page", pageCount).eq("id", collectTask.getId()));
+                        if (taskState == CollectTaskStateEnum.STOP) {
+                            redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getId());
+                            redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    log.error("任务：" + collectTask.getId() + "，采集第：" + page + " 页时出错。", e);
                 }
             }
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("current_page", pageCount).set("total_page", pageCount)
                     .set("state", CollectTaskStateEnum.FINISHED).eq("id", collectTask.getId()));
-            redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getSourceId());
-            redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getSourceId());
+            redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getId());
+            redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
+            log.info("采集任务：" + collectTask.getId() + " 执行完成！");
         }
     }
 
@@ -222,11 +235,11 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
     @Override
     public Boolean pauseCollectTask(Integer id) {
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
-        CollectTaskStateEnum taskState = (CollectTaskStateEnum) opsForValue.get(COLLECT_STATE_KEY + id);
+        CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, id);
         if (taskState == CollectTaskStateEnum.IN_EXECUTE || taskState == CollectTaskStateEnum.NOT_START) {
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("state", CollectTaskStateEnum.PAUSE).set("pause_time", new Date()).eq("id", id));
-            opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.PAUSE);
+            opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.PAUSE.getValue());
             return true;
         }
         throw new ResultException(ResultEnum.TASK_STATE_ERROR);
@@ -240,11 +253,11 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
     @Override
     public Boolean stopCollectTask(Integer id) {
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
-        CollectTaskStateEnum taskState = (CollectTaskStateEnum) opsForValue.get(COLLECT_STATE_KEY + id);
+        CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, id);
         if (taskState != CollectTaskStateEnum.FINISHED) {
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("state", CollectTaskStateEnum.STOP).set("stop_time", new Date()).eq("id", id));
-            opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.STOP);
+            opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.STOP.getValue());
             return true;
         }
         throw new ResultException(ResultEnum.TASK_STATE_ERROR);

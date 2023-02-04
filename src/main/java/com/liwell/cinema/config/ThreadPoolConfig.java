@@ -1,4 +1,4 @@
-package com.liwell.cinema.controller;
+package com.liwell.cinema.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
