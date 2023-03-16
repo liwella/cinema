@@ -19,6 +19,11 @@ spring:
         max-idle: 8
         max-active: 8
         max-wait: -1ms
+  security:
+    user:
+      name: user
+      password: user
+      roles: ADMIN
 mybatis-plus:
   type-enums-package: com.liwell.cinema.domain.enums
   mapper-locations: classpath*:com.liwell.cinema.mapper/**Mapper.xml
