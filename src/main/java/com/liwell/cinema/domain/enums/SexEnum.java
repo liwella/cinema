@@ -15,7 +15,7 @@ public enum SexEnum implements BaseEnum {
     MAN(1, "男")
     ;
 
-    private int value;
+    private Integer value;
 
     private String description;
 

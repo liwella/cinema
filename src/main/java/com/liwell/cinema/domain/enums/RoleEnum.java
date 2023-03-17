@@ -17,7 +17,7 @@ public enum RoleEnum implements BaseEnum {
     VIP(3, "vip用户")
     ;
 
-    private int value;
+    private Integer value;
 
     private String description;
 

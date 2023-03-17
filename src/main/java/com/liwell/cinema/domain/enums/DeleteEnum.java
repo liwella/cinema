@@ -14,7 +14,7 @@ public enum DeleteEnum implements BaseEnum {
     UN_DELETED(0, "未删除"),
     DELETED(1, "已删除");
 
-    private int value;
+    private Integer value;
 
     private String description;
 

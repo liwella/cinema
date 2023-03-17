@@ -16,6 +16,10 @@ public class LoginUser implements UserDetails {
 
     private User user;
 
+    public LoginUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -50,4 +54,9 @@ public class LoginUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public Integer getId() {
+        return user.getId();
+    }
+
 }
