@@ -15,4 +15,6 @@ public interface UserService extends IService<User> {
 
     LoginVO login(LoginDTO dto);
 
+    void logout();
+
 }

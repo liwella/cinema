@@ -43,4 +43,7 @@ public class RedisHelper {
         return (LoginUser) o;
     }
 
+    public void removeLoginUser(Integer userId) {
+        redisTemplate.delete(RedisConstants.LOGIN_KEY + userId);
+    }
 }
