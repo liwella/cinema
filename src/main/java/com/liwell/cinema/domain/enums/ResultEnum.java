@@ -16,9 +16,10 @@ public enum ResultEnum implements BaseEnum {
     DATA_NOT_EXIST(1001, "查询数据出错！"),
     PARAMETER_ERROR(1002, "参数错误！"),
     ENUM_VALUE_ERROR(1003, "枚举值不存在"),
+    INTERFACE_METHOD_ERROR(1004, "接口不支持的方法"),
 
     USER_PWD_ERROR(1090, "用户名或秘密错误！"),
-    TOKEN_ERROR(1091, "token 不合法！"),
+    LOGGING_ERROR(1091, "登录信息错误"),
     THIRD_INTERFACE_ERROR(1100, "调用第三方接口出错！"),
     ALREADY_TOP(1101, "已是最上层/底层节点，无法移动"),
     CHILDREN_EXISTS(1102, "有节点存在子分类未删除，请先删除子分类"),

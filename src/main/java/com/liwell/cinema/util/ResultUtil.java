@@ -15,6 +15,10 @@ public class ResultUtil {
         return new Result<>(code, msg, data);
     }
 
+    public static <T> Result<T> result(ResultEnum resultEnum, String msg) {
+        return new Result<>(resultEnum.getValue(), msg, null);
+    }
+
     public static <T> Result<T> success() {
         return success(ResultEnum.SUCCESS);
     }

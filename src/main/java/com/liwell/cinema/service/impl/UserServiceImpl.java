@@ -10,10 +10,8 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.exception.ResultException;
-import com.liwell.cinema.helper.RedisHelper;
 import com.liwell.cinema.mapper.UserMapper;
 import com.liwell.cinema.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -26,9 +24,6 @@ import java.util.Objects;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-
-    @Autowired
-    private RedisHelper redisHelper;
 
     @Override
     public LoginVO login(LoginDTO dto) {
