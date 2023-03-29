@@ -5,6 +5,8 @@ import com.liwell.cinema.domain.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper extends BaseMapper<User> {
 
+    List<String> listUserPermission(Integer userId);
 
+    List<String> listUserRole(Integer userId);
 
 }

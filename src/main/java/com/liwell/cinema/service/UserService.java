@@ -5,6 +5,8 @@ import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.entity.User;
 import com.liwell.cinema.domain.vo.LoginVO;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -16,5 +18,9 @@ public interface UserService extends IService<User> {
     LoginVO login(LoginDTO dto);
 
     void logout();
+
+    List<String> listUserPermission(Integer userId);
+
+    List<String> listUserRole(Integer userId);
 
 }

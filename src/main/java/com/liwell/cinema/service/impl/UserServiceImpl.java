@@ -14,6 +14,7 @@ import com.liwell.cinema.mapper.UserMapper;
 import com.liwell.cinema.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,4 +45,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         StpUtil.logout();
     }
 
+    @Override
+    public List<String> listUserPermission(Integer userId) {
+        return baseMapper.listUserPermission(userId);
+    }
+
+    @Override
+    public List<String> listUserRole(Integer userId) {
+        return baseMapper.listUserRole(userId);
+    }
 }
