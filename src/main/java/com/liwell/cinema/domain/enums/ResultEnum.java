@@ -20,6 +20,7 @@ public enum ResultEnum implements BaseEnum {
 
     USER_PWD_ERROR(1090, "用户名或秘密错误！"),
     LOGGING_ERROR(1091, "登录信息错误"),
+    PERMISSION_ERROR(1092, "权限不足！"),
     THIRD_INTERFACE_ERROR(1100, "调用第三方接口出错！"),
     ALREADY_TOP(1101, "已是最上层/底层节点，无法移动"),
     CHILDREN_EXISTS(1102, "有节点存在子分类未删除，请先删除子分类"),

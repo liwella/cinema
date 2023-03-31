@@ -1,6 +1,7 @@
 package com.liwell.cinema.handler;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotRoleException;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.exception.ResultException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.naming.NoPermissionException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -48,6 +50,13 @@ public class GlobalExceptionHandler {
                 return ResultUtil.result(ResultEnum.LOGGING_ERROR, NotLoginException.KICK_OUT_MESSAGE);
         }
         return ResultUtil.result(ResultEnum.LOGGING_ERROR, NotLoginException.DEFAULT_MESSAGE);
+    }
+
+    @ExceptionHandler(value = {NoPermissionException.class, NotRoleException.class})
+    @ResponseBody
+    public Result<Object> permissionException(Exception e) {
+        log.error("权限不足: ", e);
+        return ResultUtil.fail(ResultEnum.PERMISSION_ERROR);
     }
 
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})

@@ -1,6 +1,5 @@
 package com.liwell.cinema.domain.entity;
 
-import com.liwell.cinema.domain.enums.RoleEnum;
 import com.liwell.cinema.domain.enums.SexEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
@@ -33,8 +32,6 @@ public class User {
     private Date createTime;
 
     private Date updateTime;
-
-    private RoleEnum role;
 
     private StateEnum state;
 
