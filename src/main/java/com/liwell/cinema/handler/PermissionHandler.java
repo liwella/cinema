@@ -25,7 +25,7 @@ public class PermissionHandler implements StpInterface {
         if (Objects.isNull(o)) {
             return null;
         }
-        Integer userId = (Integer) o;
+        Integer userId = Integer.parseInt(o.toString());
         return userService.listUserPermission(userId);
     }
 
@@ -34,7 +34,7 @@ public class PermissionHandler implements StpInterface {
         if (Objects.isNull(o)) {
             return null;
         }
-        Integer userId = (Integer) o;
+        Integer userId = Integer.parseInt(o.toString());
         return userService.listUserRole(userId);
     }
 

@@ -1,6 +1,7 @@
 package com.liwell.cinema.handler;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
         return ResultUtil.result(ResultEnum.LOGGING_ERROR, NotLoginException.DEFAULT_MESSAGE);
     }
 
-    @ExceptionHandler(value = {NoPermissionException.class, NotRoleException.class})
+    @ExceptionHandler(value = {NotPermissionException.class, NotRoleException.class})
     @ResponseBody
     public Result<Object> permissionException(Exception e) {
         log.error("权限不足: ", e);
