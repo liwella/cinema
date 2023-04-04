@@ -2,16 +2,25 @@ package com.liwell.cinema.service.impl;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.LoginDTO;
+import com.liwell.cinema.domain.dto.UserAddDTO;
+import com.liwell.cinema.domain.dto.UserPageDTO;
+import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.User;
+import com.liwell.cinema.domain.entity.UserRole;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.vo.LoginVO;
+import com.liwell.cinema.domain.vo.UserPageVO;
 import com.liwell.cinema.exception.ResultException;
+import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
+import com.liwell.cinema.mapper.UserRoleMapper;
 import com.liwell.cinema.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +34,11 @@ import java.util.Objects;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    @Autowired
+    private RoleMapper roleMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     @Override
     public LoginVO login(LoginDTO dto) {
@@ -53,5 +67,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public List<String> listUserRole(Integer userId) {
         return baseMapper.listUserRole(userId);
+    }
+
+    @Override
+    public void addUser(UserAddDTO userAddDTO) {
+        Role role = roleMapper.selectById(userAddDTO.getRoleId());
+        if (Objects.isNull(role)) {
+            throw new ResultException(ResultEnum.NOT_ROLE_EXCEPTION);
+        }
+        User user = BeanUtil.copyProperties(userAddDTO, User.class, "roleId");
+        baseMapper.insert(user);
+        UserRole userRole = new UserRole(user.getId(), userAddDTO.getRoleId());
+        userRoleMapper.insert(userRole);
+    }
+
+    @Override
+    public List<UserPageVO> pageUser(UserPageDTO dto) {
+        return null;
     }
 }
