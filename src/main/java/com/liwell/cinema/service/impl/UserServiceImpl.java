@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
@@ -82,7 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<UserPageVO> pageUser(UserPageDTO dto) {
-        return null;
+    public Page<UserPageVO> pageUser(UserPageDTO dto) {
+        return baseMapper.pageUser(dto);
     }
 }

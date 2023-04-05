@@ -1,7 +1,10 @@
 package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.liwell.cinema.domain.dto.UserPageDTO;
 import com.liwell.cinema.domain.entity.User;
+import com.liwell.cinema.domain.vo.UserPageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +23,7 @@ public interface UserMapper extends BaseMapper<User> {
     List<String> listUserPermission(Integer userId);
 
     List<String> listUserRole(Integer userId);
+
+    Page<UserPageVO> pageUser(UserPageDTO dto);
 
 }

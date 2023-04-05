@@ -2,4 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liwell.cinema.mapper.MenuMapper">
 
+    <select id="listMenu" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.vo.MenuListVO">
+        select distinct
+                        m.id,
+                        m.menu_name menuName,
+                        m.url url,
+                        m.permission permission,
+                        m.type type,
+                        m.icon icon,
+                        m.level level,
+                        m.parent_id parentId,
+                        m.sort sort
+        from user_role ur
+        join role_menu rm
+        on ur.role_id=rm.role_id
+        join menu m
+        on rm.menu_id=m.id
+        <where>
+            ur.user_id=#{value}
+        </where>
+    </select>
+
 </mapper>

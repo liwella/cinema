@@ -16,11 +16,7 @@ import java.util.Date;
 @Data
 public class UserPageDTO extends Page {
 
-    private String username;
-
-    private String email;
-
-    private String phone;
+    private String condition;
 
     private Date startTime;
 

@@ -1,5 +1,6 @@
 package com.liwell.cinema.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Description:
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/pageUser")
-    public Result<List<UserPageVO>> pageUser(@RequestBody UserPageDTO dto) {
+    public Result<Page<UserPageVO>> pageUser(@RequestBody UserPageDTO dto) {
         return ResultUtil.success(userService.pageUser(dto));
     }
 

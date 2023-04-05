@@ -1,5 +1,6 @@
 package com.liwell.cinema.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
@@ -28,6 +29,6 @@ public interface UserService extends IService<User> {
 
     void addUser(UserAddDTO userAddDTO);
 
-    List<UserPageVO> pageUser(UserPageDTO dto);
+    Page<UserPageVO> pageUser(UserPageDTO dto);
 
 }
