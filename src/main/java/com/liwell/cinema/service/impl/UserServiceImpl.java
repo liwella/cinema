@@ -16,6 +16,7 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
+import com.liwell.cinema.domain.vo.UserVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
@@ -85,5 +86,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Page<UserPageVO> pageUser(UserPageDTO dto) {
         return baseMapper.pageUser(dto);
+    }
+
+    @Override
+    public UserVO getUser() {
+        Integer userId = StpUtil.getLoginIdAsInt();
+        User user = baseMapper.selectById(userId);
+        return BeanUtil.copyProperties(user, UserVO.class);
     }
 }

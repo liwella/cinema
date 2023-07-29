@@ -8,6 +8,7 @@ import com.liwell.cinema.domain.dto.UserPageDTO;
 import com.liwell.cinema.domain.entity.User;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
+import com.liwell.cinema.domain.vo.UserVO;
 
 import java.util.List;
 
@@ -30,5 +31,7 @@ public interface UserService extends IService<User> {
     void addUser(UserAddDTO userAddDTO);
 
     Page<UserPageVO> pageUser(UserPageDTO dto);
+
+    UserVO getUser();
 
 }

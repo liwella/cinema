@@ -12,7 +12,7 @@ import lombok.Getter;
 public enum ResultEnum implements BaseEnum {
 
     // 通用异常
-    SUCCESS(0, "操作成功"),
+    SUCCESS(200, "操作成功"),
     FAIL(-1, "操作失败"),
     DATA_NOT_EXIST(1001, "查询数据出错！"),
     PARAMETER_ERROR(1002, "参数错误！"),

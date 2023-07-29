@@ -6,6 +6,7 @@ import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.UserPageVO;
+import com.liwell.cinema.domain.vo.UserVO;
 import com.liwell.cinema.service.UserService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,11 @@ public class UserController {
     @PostMapping("/pageUser")
     public Result<Page<UserPageVO>> pageUser(@RequestBody UserPageDTO dto) {
         return ResultUtil.success(userService.pageUser(dto));
+    }
+
+    @PostMapping("/getUser")
+    public Result<UserVO> getUser() {
+        return ResultUtil.success(userService.getUser());
     }
 
 }
