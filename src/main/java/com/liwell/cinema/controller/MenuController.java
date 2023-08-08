@@ -6,6 +6,7 @@ import com.liwell.cinema.domain.vo.MenuListVO;
 import com.liwell.cinema.service.MenuService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,10 +26,9 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
-    @RequestMapping("/listMenu")
-    public Result<List<MenuListVO>> listMenu(@RequestBody IdDTO dto) {
-        return ResultUtil.success(menuService.listMenu(dto));
+    @PostMapping("/listMenu")
+    public Result<List<MenuListVO>> listMenu() {
+        return ResultUtil.success(menuService.listMenu());
     }
-
 
 }

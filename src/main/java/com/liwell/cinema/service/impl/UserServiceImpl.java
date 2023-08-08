@@ -92,6 +92,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserVO getUser() {
         Integer userId = StpUtil.getLoginIdAsInt();
         User user = baseMapper.selectById(userId);
-        return BeanUtil.copyProperties(user, UserVO.class);
+        UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
+        Role role = baseMapper.getUserRole(userId);
+        userVO.setRole(role);
+        return userVO;
     }
+
 }

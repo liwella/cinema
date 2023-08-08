@@ -63,5 +63,12 @@
         </where>
     </select>
 
+    <select id="getUserRole" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.entity.Role">
+        select r.id id,
+               r.role_name roleName,
+               r.code code
+        from user_role ur left join role r
+        on ur.role_id=r.id where ur.user_id=#{value}
+    </select>
 
 </mapper>

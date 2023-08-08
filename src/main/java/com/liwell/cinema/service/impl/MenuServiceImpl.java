@@ -1,5 +1,6 @@
 package com.liwell.cinema.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.IdDTO;
@@ -28,11 +29,8 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     @Override
-    public List<MenuListVO> listMenu(IdDTO dto) {
-        Integer userId = dto.getId();
-        if (Objects.isNull(userId)) {
-            throw new ResultException(ResultEnum.PARAMETER_ERROR);
-        }
+    public List<MenuListVO> listMenu() {
+        Integer userId = StpUtil.getLoginIdAsInt();
         List<MenuListVO> menuList = baseMapper.listMenu(userId);
         if (CollectionUtil.isEmpty(menuList)) {
             return new ArrayList<>();

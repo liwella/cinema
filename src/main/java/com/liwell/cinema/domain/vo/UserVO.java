@@ -1,5 +1,6 @@
 package com.liwell.cinema.domain.vo;
 
+import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.enums.SexEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
@@ -34,5 +35,7 @@ public class UserVO {
     private Date updateTime;
 
     private StateEnum state;
+
+    private Role role;
 
 }
