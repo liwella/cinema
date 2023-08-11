@@ -2,6 +2,7 @@ package com.liwell.cinema.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.liwell.cinema.domain.enums.MvAreaEnum;
+import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
 import java.util.Date;
@@ -15,17 +16,20 @@ import java.util.Date;
 @Data
 public class MovieDetailVO {
 
-    private Integer id;
+    private Integer movieId;
 
     private String mvName;
 
     private Integer mvType;
 
-    private String mvTypeName;
+    private String categoryName;
 
     private MvAreaEnum mvArea;
 
     private Integer mvYear;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
@@ -37,6 +41,8 @@ public class MovieDetailVO {
     private String actorList;
 
     private String directorList;
+
+    private StateEnum state;
 
     private String picture;
 

@@ -53,6 +53,7 @@
             mv.create_time createTime,
             mv.update_time updateTime,
             mv.update_info updateInfo,
+            mv.description description,
             mv.actor_list actorList,
             mv.director_list directorList,
             mv.state state,
@@ -79,17 +80,19 @@
 
     <select id="getMovieDetail" parameterType="com.liwell.cinema.domain.dto.IdDTO" resultType="com.liwell.cinema.domain.vo.MovieDetailVO">
         select
-            mv.id,
+            mv.id movieId,
             mv.mv_name mvName,
             mv.mv_type mvType,
-            cg.name mvTypeName,
+            cg.name categoryName,
             mv.mv_area mvArea,
             mv.mv_year mvYear,
+            mv.create_time createTime,
             mv.update_time updateTime,
             mv.update_info updateInfo,
             mv.description description,
             mv.actor_list actorList,
             mv.director_list directorList,
+            mv.state state,
             mv.picture picture,
             mv.score score
         from movie mv

@@ -1,9 +1,9 @@
 spring:
   application:
-    name: cinema
+    name: dunhao
 server:
   servlet:
-    context-path: /cinema
+    context-path: /dunhao
   port: 9000
 ############## Sa-Token 配置 ##############
 sa-token:

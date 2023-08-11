@@ -2,6 +2,7 @@ package com.liwell.cinema.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.IdDTO;
+import com.liwell.cinema.domain.dto.MvAddDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.MovieDetailVO;
@@ -35,6 +36,11 @@ public class MovieController {
     @PostMapping("/detail")
     public Result<MovieDetailVO> getMovieDetail(@RequestBody IdDTO dto) {
         return ResultUtil.success(movieService.getMovieDetail(dto));
+    }
+
+    @PostMapping("/addMovie")
+    public Result addMovie(@RequestBody MvAddDTO dto) {
+        return ResultUtil.success();
     }
 
 }
