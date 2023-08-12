@@ -26,7 +26,7 @@ public class MovieDetailVO {
 
     private MvAreaEnum mvArea;
 
-    private Integer mvYear;
+    private String mvYear;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
@@ -45,6 +45,8 @@ public class MovieDetailVO {
     private StateEnum state;
 
     private String picture;
+
+    private String screenPicture;
 
     private Double score;
 

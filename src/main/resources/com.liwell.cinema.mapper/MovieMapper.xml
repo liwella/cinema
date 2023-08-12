@@ -50,6 +50,7 @@
             mv.mv_type categoryId,
             cg.name categoryName,
             mv.mv_area mvArea,
+            mv.mv_year mvYear,
             mv.create_time createTime,
             mv.update_time updateTime,
             mv.update_info updateInfo,
@@ -94,11 +95,64 @@
             mv.director_list directorList,
             mv.state state,
             mv.picture picture,
+            mv.screen_picture scrennPicture,
             mv.score score
         from movie mv
         left join category cg
         on mv.mv_type=cg.id
         where mv.state=1 and mv.id=#{id}
     </select>
+
+    <insert id="addOrUpdate" parameterType="com.liwell.cinema.domain.dto.MvAddDTO">
+        insert into movie
+            (id,
+             mv_name,
+             mv_type,
+             mv_area,
+             mv_year,
+             create_time,
+             update_time,
+             update_info,
+             description,
+             actor_list,
+             director_list,
+             state,
+             picture,
+             screen_picture,
+             score
+        ) values
+             (
+              #{movieId},
+              #{mvName},
+              #{mvType},
+              #{mvArea},
+              #{mvYear},
+              #{createTime},
+              #{updateTime},
+              #{updateInfo},
+              #{description},
+              #{actorList},
+              #{directorList},
+              #{state},
+              #{picture},
+              #{screenPicture},
+              #{score}
+             )
+        on duplicate key update
+             mv_name=values(mv_name),
+             mv_type=values(mv_type),
+             mv_area=values(mv_area),
+             mv_year=values(mv_year),
+             create_time=values(create_time),
+             update_time=values(update_time),
+             update_info=values(update_info),
+             description=values(description),
+             actor_list=values(actor_list),
+             director_list=values(director_list),
+             state=values(state),
+             picture=values(picture),
+             screen_picture=values(screen_picture),
+             score=values(score)
+    </insert>
 
 </mapper>

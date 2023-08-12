@@ -2,6 +2,9 @@ package com.liwell.cinema.util;
 
 import com.liwell.cinema.domain.enums.BaseEnum;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Description:
  *
@@ -17,6 +20,10 @@ public class EnumUtils {
             }
         }
         return null;
+    }
+
+    public static <T extends BaseEnum> List<T> listEnums(Class<T> c) {
+        return Arrays.asList(c.getEnumConstants());
     }
 
 }
