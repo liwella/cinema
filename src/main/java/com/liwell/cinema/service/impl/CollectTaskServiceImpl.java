@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.CollectTaskAddDTO;
 import com.liwell.cinema.domain.dto.CollectTaskPageDTO;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.CollectTask;
 import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.entity.Playlist;
@@ -240,6 +241,19 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("state", CollectTaskStateEnum.PAUSE).set("pause_time", new Date()).eq("id", id));
             opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.PAUSE.getValue());
+            return true;
+        }
+        throw new ResultException(ResultEnum.TASK_STATE_ERROR);
+    }
+
+    @Override
+    public Boolean startCollectTask(IdDTO dto) {
+        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
+        CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, dto.getId());
+        if (taskState == CollectTaskStateEnum.PAUSE) {
+            baseMapper.update(null, new UpdateWrapper<CollectTask>()
+                    .set("state", CollectTaskStateEnum.NOT_START).set("start_time", new Date()).eq("id", dto.getId()));
+            opsForValue.set(COLLECT_STATE_KEY + dto.getId(), CollectTaskStateEnum.NOT_START.getValue());
             return true;
         }
         throw new ResultException(ResultEnum.TASK_STATE_ERROR);

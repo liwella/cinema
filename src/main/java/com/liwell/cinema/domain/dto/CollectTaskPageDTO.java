@@ -2,9 +2,8 @@ package com.liwell.cinema.domain.dto;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
+import com.liwell.cinema.domain.po.TimeRange;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * Description:
@@ -15,9 +14,9 @@ import java.util.Date;
 @Data
 public class CollectTaskPageDTO extends Page {
 
-    private Date startTime;
+    private TimeRange startTime;
 
-    private Date endTime;
+    private TimeRange endTime;
 
     private Integer sourceId;
 

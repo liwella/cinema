@@ -2,8 +2,11 @@ package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liwell.cinema.domain.entity.SourceConfig;
+import com.liwell.cinema.domain.vo.ScListSimpleVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Description:
@@ -15,5 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SourceConfigMapper extends BaseMapper<SourceConfig> {
 
+    List<ScListSimpleVO> listSimpleSc();
 
 }

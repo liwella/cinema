@@ -1,5 +1,6 @@
 package com.liwell.cinema.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
 import lombok.Data;
 
@@ -18,22 +19,27 @@ public class CollectTaskPageVO {
 
     private Integer sourceId;
 
-    private Integer sourceName;
+    private String sourceName;
 
     private Integer duration;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date pauseTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date stopTime;
 
     private Integer process;
 
     private CollectTaskStateEnum state;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date finishTime;
 
 }

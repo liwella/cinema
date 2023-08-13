@@ -17,7 +17,7 @@
         select
             ct.id,
             ct.source_id sourceId,
-            sc.name sourceName,
+            sc.source_name sourceName,
             ct.duration duration,
             ct.create_time createTime,
             ct.start_time startTime,
@@ -36,10 +36,12 @@
                 and ct.source_id=#{sourceId}
             </if>
             <if test="startTime!=null">
-                and ct.create_time>=#{startTime}
+                and ct.create_time>=#{startTime.startTime}
+                and ct.create_time&lt;=#{startTime.endTime}
             </if>
             <if test="endTime!=null">
-                and ct.create_time&lt;=#{endTime}
+                and ct.finish_time>=#{endTime.startTime}
+                and ct.finish_time&lt;=#{endTime.endTime}
             </if>
         </where>
     </select>

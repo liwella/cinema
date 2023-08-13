@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.CollectTaskAddDTO;
 import com.liwell.cinema.domain.dto.CollectTaskPageDTO;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.CollectTask;
 import com.liwell.cinema.domain.vo.CollectTaskPageVO;
 
@@ -24,5 +25,7 @@ public interface CollectTaskService extends IService<CollectTask> {
     Integer getTaskProcess(Integer id);
 
     Page<CollectTaskPageVO> pageCollectTask(CollectTaskPageDTO dto);
+
+    Boolean startCollectTask(IdDTO dto);
 
 }
