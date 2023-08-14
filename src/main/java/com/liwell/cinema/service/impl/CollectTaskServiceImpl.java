@@ -183,7 +183,6 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                     }
                     opsForValue.set(COLLECT_PROCESS_KEY + collectTask.getId(), page + ":" + pageCount);
                     if (movies.size() == 0) {
-                        tryStop(page, pageCount);
                         continue;
                     }
                     movieMapper.insertMovies(movies);
