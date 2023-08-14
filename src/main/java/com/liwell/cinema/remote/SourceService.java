@@ -27,7 +27,7 @@ public class SourceService {
     @Autowired
     private SourceConfigMapper sourceConfigMapper;
     @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate trustedTemplate;
 
     /**
      * 获取分类等信息
@@ -36,7 +36,7 @@ public class SourceService {
      */
     public CollectListResult sourceBaseInfo(Integer sourceId) {
         SourceConfig sourceConfig = getSourceConfig(sourceId);
-        ResponseEntity<CollectListResult> pageCountResponse = restTemplate
+        ResponseEntity<CollectListResult> pageCountResponse = trustedTemplate
                 .getForEntity(sourceConfig.getListUrl(), CollectListResult.class, new HashMap<>());
         if (pageCountResponse.getBody() == null || pageCountResponse.getStatusCodeValue() != 200) {
             throw new ResultException(ResultEnum.THIRD_INTERFACE_ERROR);
@@ -53,7 +53,7 @@ public class SourceService {
     public CollectDetailResult pageSource(String url, Integer page) {
         Map<String, Integer> detailParam = new HashMap<>();
         detailParam.put("pg", page);
-        ResponseEntity<CollectDetailResult> detailResultResponseEntity = restTemplate
+        ResponseEntity<CollectDetailResult> detailResultResponseEntity = trustedTemplate
                 .getForEntity(url + "&pg={pg}", CollectDetailResult.class, detailParam);
         return detailResultResponseEntity.getBody();
     }

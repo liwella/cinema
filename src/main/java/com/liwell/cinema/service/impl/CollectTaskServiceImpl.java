@@ -130,7 +130,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
      */
     public class CollectThread implements Runnable {
 
-        private CollectTask collectTask;
+        private final CollectTask collectTask;
 
         public CollectThread(CollectTask collectTask) {
             this.collectTask = collectTask;
@@ -154,6 +154,9 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             }
             for (; page <= pageCount; page++) {
                 try {
+                    if (tryStop(page, pageCount)) {
+                        return;
+                    }
                     log.info("当前采集到第：" + page + " 页");
                     CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), page);
                     if (detailResult == null) {
@@ -180,21 +183,11 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                     }
                     opsForValue.set(COLLECT_PROCESS_KEY + collectTask.getId(), page + ":" + pageCount);
                     if (movies.size() == 0) {
+                        tryStop(page, pageCount);
                         continue;
                     }
                     movieMapper.insertMovies(movies);
                     playlistMapper.insertPlaylist(playlists);
-                    CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, collectTask.getId());
-                    if (taskState == CollectTaskStateEnum.PAUSE || taskState == CollectTaskStateEnum.STOP) {
-                        log.info("接收到状态指令，采集任务：" + collectTask.getId() + " 停止！");
-                        collectTaskMapper.update(null, new UpdateWrapper<CollectTask>()
-                                .set("current_page", page).set("total_page", pageCount).eq("id", collectTask.getId()));
-                        if (taskState == CollectTaskStateEnum.STOP) {
-                            redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getId());
-                            redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
-                        }
-                        return;
-                    }
                 } catch (Exception e) {
                     log.error("任务：" + collectTask.getId() + "，采集第：" + page + " 页时出错。", e);
                 }
@@ -206,6 +199,22 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
             log.info("采集任务：" + collectTask.getId() + " 执行完成！");
         }
+
+        private boolean tryStop(Integer page, Integer pageCount) {
+            CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, collectTask.getId());
+            if (taskState == CollectTaskStateEnum.PAUSE || taskState == CollectTaskStateEnum.STOP) {
+                log.info("接收到状态指令，采集任务：" + collectTask.getId() + " 停止！");
+                collectTaskMapper.update(null, new UpdateWrapper<CollectTask>()
+                        .set("current_page", page).set("total_page", pageCount).eq("id", collectTask.getId()));
+                if (taskState == CollectTaskStateEnum.STOP) {
+                    redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getId());
+                    redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
+                }
+                return true;
+            }
+            return false;
+        }
+
     }
 
     /**
