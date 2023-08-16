@@ -27,8 +27,8 @@ public class SourceController {
     @Autowired
     private SourceService sourceService;
 
-    @PostMapping("/getSourceCategory")
-    public Result<List<CollectCategory>> getSourceCategory(@RequestBody IdDTO idDTO) {
+    @PostMapping("/listSourceCategory")
+    public Result<List<CollectCategory>> listSourceCategory(@RequestBody IdDTO idDTO) {
         CollectListResult collectListResult = sourceService.sourceBaseInfo(idDTO.getId());
         return ResultUtil.success(collectListResult.getCollectCategories());
     }
