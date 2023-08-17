@@ -10,6 +10,8 @@ import com.liwell.cinema.domain.vo.PlayTypeVO;
 import com.liwell.cinema.domain.vo.PlaylistVO;
 import com.liwell.cinema.mapper.PlaylistMapper;
 import com.liwell.cinema.service.PlaylistService;
+import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +31,9 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
         List<PlaylistPO> playlistPOS = baseMapper.selectPlaylistPO(dto.getMovieId());
         List<PlaylistVO> result = new ArrayList<>();
         for (PlaylistPO playlistPO : playlistPOS) {
+            if (StringUtils.isBlank(playlistPO.getSeparatorNote())) {
+                playlistPO.setSeparatorNote("$$$");
+            }
             String separatorNote = ReUtil.escape(playlistPO.getSeparatorNote());
             String[] playTypes = playlistPO.getPlayType().split(separatorNote);
             String[] playSources = playlistPO.getPlayUrl().split(separatorNote);

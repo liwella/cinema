@@ -2,12 +2,14 @@ package com.liwell.cinema.domain.entity;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.liwell.cinema.domain.enums.MvAreaEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.po.CollectDetail;
 import com.liwell.cinema.util.EnumUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -56,7 +58,11 @@ public class Movie {
         setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ?
                 MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
         setMvYear(extractNumber(collectDetail.getVod_year()));
-        setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
+        try {
+            setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));
+        } catch (Exception e) {
+            setCreateTime(new Date());
+        }
         setUpdateTime(new Date());
         setUpdateInfo(extractNumber(collectDetail.getVod_remarks()));
         setDescription(collectDetail.getVod_content());
