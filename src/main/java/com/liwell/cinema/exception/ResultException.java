@@ -21,13 +21,13 @@ public class ResultException extends RuntimeException {
     }
 
     public ResultException(ResultEnum resultEnum, Object data) {
-        super(resultEnum.getMessage());
+        super(resultEnum.getDescription());
         this.code = resultEnum.getValue();
         this.data = data;
     }
 
     public ResultException(ResultEnum resultEnum) {
-        super(resultEnum.getMessage());
+        super(resultEnum.getDescription());
         this.code = resultEnum.getValue();
     }
 

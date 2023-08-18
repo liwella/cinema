@@ -55,8 +55,7 @@ public class Movie {
 
     public Movie init(CollectDetail collectDetail) {
         setMvName(collectDetail.getVod_name());
-        setMvArea(EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()) == null ?
-                MvAreaEnum.UNKNOWN : EnumUtils.get(MvAreaEnum.class, collectDetail.getVod_area()));
+        setMvArea(MvAreaEnum.getByPattern(collectDetail.getVod_area().split(",")[0]));
         setMvYear(extractNumber(collectDetail.getVod_year()));
         try {
             setCreateTime(DateUtil.parse(collectDetail.getVod_year(), DatePattern.NORM_YEAR_PATTERN));

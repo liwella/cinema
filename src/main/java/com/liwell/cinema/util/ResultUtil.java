@@ -24,7 +24,7 @@ public class ResultUtil {
     }
 
     public static <T> Result<T> success(ResultEnum resultEnum, T data) {
-        return result(resultEnum.getValue(), resultEnum.getMessage(), data);
+        return result(resultEnum.getValue(), resultEnum.getDescription(), data);
     }
 
     public static <T> Result<T> success(ResultEnum resultEnum) {
@@ -40,7 +40,7 @@ public class ResultUtil {
     }
 
     public static <T> Result<T> fail(ResultEnum resultEnum, T data) {
-        return result(resultEnum.getValue(), resultEnum.getMessage(), data);
+        return result(resultEnum.getValue(), resultEnum.getDescription(), data);
     }
 
     public static <T> Result<T> fail(ResultEnum resultEnum) {

@@ -15,6 +15,6 @@ import com.liwell.cinema.helper.EnumDeserializer;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public interface BaseEnum extends IEnum {
 
-
+    String getDescription();
 
 }

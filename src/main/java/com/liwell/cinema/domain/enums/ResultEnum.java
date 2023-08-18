@@ -39,11 +39,11 @@ public enum ResultEnum implements BaseEnum {
 
     private Integer value;
 
-    private String message;
+    private String description;
 
-    ResultEnum(Integer value, String message) {
+    ResultEnum(Integer value, String description) {
         this.value = value;
-        this.message = message;
+        this.description = description;
     }
 
 }

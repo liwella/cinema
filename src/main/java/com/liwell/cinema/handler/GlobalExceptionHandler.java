@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
     public Result<Object> argumentError(MethodArgumentNotValidException exception) {
         FieldError fieldError = exception.getBindingResult().getFieldErrors().get(0);
         return ResultUtil.result(ResultEnum.PARAMETER_ERROR,
-                ResultEnum.PARAMETER_ERROR.getMessage() + "," + fieldError.getField() + fieldError.getDefaultMessage());
+                ResultEnum.PARAMETER_ERROR.getDescription() + "," + fieldError.getField() + fieldError.getDefaultMessage());
     }
 
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class, Exception.class})

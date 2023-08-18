@@ -22,6 +22,15 @@ public class EnumUtils {
         return null;
     }
 
+    public static <T extends BaseEnum> T getByDesc(Class<T> c, String desc) {
+        for (T e : c.getEnumConstants()) {
+            if (e.getDescription().equals(desc)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     public static <T extends BaseEnum> List<T> listEnums(Class<T> c) {
         return Arrays.asList(c.getEnumConstants());
     }
