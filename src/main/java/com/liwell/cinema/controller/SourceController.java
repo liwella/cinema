@@ -29,7 +29,7 @@ public class SourceController {
 
     @PostMapping("/listSourceCategory")
     public Result<List<CollectCategory>> listSourceCategory(@RequestBody IdDTO idDTO) {
-        CollectListResult collectListResult = sourceService.sourceBaseInfo(idDTO.getId());
+        CollectListResult collectListResult = sourceService.sourceBaseInfo(idDTO.getId(), null);
         return ResultUtil.success(collectListResult.getCollectCategories());
     }
 

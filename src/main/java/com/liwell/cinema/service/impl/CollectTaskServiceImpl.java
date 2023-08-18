@@ -39,10 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Description:
@@ -91,7 +88,8 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
         List<CollectTask> collectTaskList = new ArrayList<>();
         for (Integer sourceId : dto.getSourceIds()) {
             CollectTask collectTask = new CollectTask();
-            collectTask.init(sourceId, dto.getDuration());
+            collectTask.init(sourceId,
+                    Objects.isNull(dto.getDuration()) ? null : dto.getDuration() * 24);
             collectTaskList.add(collectTask);
         }
         baseMapper.addCollectTasks(collectTaskList);
@@ -144,7 +142,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
             opsForValue.set(COLLECT_STATE_KEY + collectTask.getId(), CollectTaskStateEnum.IN_EXECUTE.getValue());
             SourceConfig sourceConfig = sourceService.getSourceConfig(collectTask.getSourceId());
-            CollectListResult baseInfoResult = sourceService.sourceBaseInfo(sourceConfig.getId());
+            CollectListResult baseInfoResult = sourceService.sourceBaseInfo(sourceConfig.getId(), collectTask.getDuration());
             Integer pageCount = baseInfoResult.getPagecount();
             Map<Integer, Integer> categoryMapping = categoryMappingService.getCategoryMapping(sourceConfig.getId());
             int page = collectTask.getCurrentPage() == null ? 0 : collectTask.getCurrentPage() + 1;
@@ -158,7 +156,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                         return;
                     }
                     log.info("当前采集到第：" + page + " 页");
-                    CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), page);
+                    CollectDetailResult detailResult = sourceService.pageSource(sourceConfig.getDetailUrl(), page, collectTask.getDuration());
                     if (detailResult == null) {
                         continue;
                     }
@@ -193,7 +191,8 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
             }
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("current_page", pageCount).set("total_page", pageCount)
-                    .set("state", CollectTaskStateEnum.FINISHED).eq("id", collectTask.getId()));
+                    .set("state", CollectTaskStateEnum.FINISHED)
+                    .set("finish_time", new Date()).eq("id", collectTask.getId()));
             redisTemplate.delete(COLLECT_STATE_KEY + collectTask.getId());
             redisTemplate.delete(COLLECT_PROCESS_KEY + collectTask.getId());
             log.info("采集任务：" + collectTask.getId() + " 执行完成！");

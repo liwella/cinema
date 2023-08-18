@@ -8,6 +8,7 @@ import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.po.CollectDetail;
 import com.liwell.cinema.util.EnumUtils;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
  * @author Li
  * @date Created on 2023/1/24
  */
+@Slf4j
 @Data
 public class Movie {
 
@@ -76,8 +78,12 @@ public class Movie {
     private Integer extractNumber(String target) {
         String REGEX = "[^0-9]";
         String result = Pattern.compile(REGEX).matcher(target).replaceAll("").trim();
-        if (StringUtils.isNotBlank(result)) {
-            return Integer.parseInt(result);
+        try {
+            if (StringUtils.isNotBlank(result)) {
+                return Integer.parseInt(result);
+            }
+        } catch (Exception e) {
+            log.error("上映日期转换出错：", e);
         }
         return null;
     }
