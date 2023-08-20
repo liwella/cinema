@@ -6,7 +6,7 @@ services:
     privileged: true
     volumes:
 #      - /opt/app/redis/data:/data
-      - /opt/app/redis:/redis
+      - /opt/app/redis:/redis:Z
 #      - /opt/app/redis/logs:/logs
     command: ["redis-server","/redis/redis.conf"]
     ports:
