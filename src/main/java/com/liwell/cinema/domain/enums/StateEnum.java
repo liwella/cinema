@@ -11,8 +11,9 @@ import lombok.Getter;
 @Getter
 public enum StateEnum implements BaseEnum {
 
+    INVALID(0, "失效"),
     VALID(1, "有效"),
-    INVALID(2, "失效");
+    ;
 
     private Integer value;
 

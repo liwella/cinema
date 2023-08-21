@@ -35,6 +35,7 @@ public enum ResultEnum implements BaseEnum {
     TASK_IN_EXECUTE(1303, "采集源当前有采集任务在执行中，请勿重复执行"),
     TASK_STATE_ERROR(1304, "当前任务状态无法执行"),
     TASK_NOT_EXISTS(1305, "采集任务不存在"),
+    SOURCE_CONFIG_NOT_EXISTS(1306, "查询采集源配置不存在"),
     ;
 
     private Integer value;

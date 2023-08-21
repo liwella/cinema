@@ -1,16 +1,16 @@
-package com.liwell.cinema.domain.entity;
+package com.liwell.cinema.domain.vo;
 
 import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
 /**
- * Description:
- *
- * @author Li
- * @date Created on 2023/1/24
+ * @author litianyi
+ * @filename SourceConfigListVO.java
+ * @purpose
+ * @history 2023/8/21 litianyi
  */
 @Data
-public class SourceConfig {
+public class SourceConfigListVO {
 
     private Integer id;
 

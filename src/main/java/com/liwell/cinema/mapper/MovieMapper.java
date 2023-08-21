@@ -31,4 +31,6 @@ public interface MovieMapper extends BaseMapper<Movie> {
 
     void addOrUpdate(MvAddDTO dto);
 
+    void deleteNonSourceMovie();
+
 }

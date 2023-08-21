@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+    url: jdbc:log4jdbc:mysql://1.12.233.74:8002/dunhao?useSSL=false&autoReconnect=true&sessionVariables=FOREIGN_KEY_CHECKS=0&useUnicode=yes&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: qwer1234
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      max-lifetime: 1800000
+  redis:
+    host: 1.12.233.74
+    port: 8001
+    jedis:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
+  security:
+    user:
+      name: user
+      password: user
+      roles: ADMIN
+mybatis-plus:
+  type-enums-package: com.liwell.cinema.domain.enums
+  mapper-locations: classpath*:com.liwell.cinema.mapper/**Mapper.xml
+  type-aliases-package: com.liwell.cinema.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      table-underline: true
+      select-strategy: not_null
