@@ -1,6 +1,5 @@
 package com.liwell.cinema.domain.enums;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 /**

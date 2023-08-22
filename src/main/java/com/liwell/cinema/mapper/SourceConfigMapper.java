@@ -3,7 +3,6 @@ package com.liwell.cinema.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liwell.cinema.domain.entity.SourceConfig;
 import com.liwell.cinema.domain.vo.ScListSimpleVO;
-import com.liwell.cinema.domain.vo.SourceConfigListVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
