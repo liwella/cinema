@@ -16,7 +16,6 @@ public enum StateEnum implements BaseEnum {
     VALID(1, "有效"),
     ;
 
-    @EnumValue
     private Integer value;
 
     private String description;
