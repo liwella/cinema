@@ -44,11 +44,6 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
     private MovieMapper movieMapper;
 
     @Override
-    public List<ScListSimpleVO> listSimpleSc() {
-        return baseMapper.listSimpleSc();
-    }
-
-    @Override
     public Boolean updateSourceConfig(SourceConfigUpdateDTO dto) {
         SourceConfig sourceConfig = baseMapper.selectById(dto.getId());
         if (Objects.isNull(sourceConfig)) {
@@ -73,4 +68,10 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
         movieMapper.deleteNonSourceMovie();
         return true;
     }
+
+    @Override
+    public List<ScListSimpleVO> listSimpleSc() {
+        return baseMapper.listSimpleSc();
+    }
+
 }

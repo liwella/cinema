@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.SourceConfigAddDTO;
+import com.liwell.cinema.domain.dto.SourceConfigListDTO;
 import com.liwell.cinema.domain.dto.SourceConfigUpdateDTO;
 import com.liwell.cinema.domain.entity.SourceConfig;
 import com.liwell.cinema.domain.enums.ResultEnum;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Description:
@@ -41,9 +43,13 @@ public class SourceConfigController {
      * @return
      */
     @PostMapping("/list")
-    public Result<List<SourceConfigListVO>> listSourceConfig() {
-        List<SourceConfig> sourceConfigs = sourceConfigService.list();
-        return ResultUtil.success(BeanUtil.copyToList(sourceConfigs, SourceConfigListVO.class));
+    public Result<List<SourceConfigListVO>> listSourceConfig(@RequestBody SourceConfigListDTO dto) {
+        QueryWrapper<SourceConfig> queryWrapper = new QueryWrapper<>();
+        if (Objects.nonNull(dto.getState())) {
+            queryWrapper.eq("state", dto.getState());
+        }
+        List<SourceConfig> list = sourceConfigService.list(queryWrapper);
+        return ResultUtil.success(BeanUtil.copyToList(list, SourceConfigListVO.class));
     }
 
     /**

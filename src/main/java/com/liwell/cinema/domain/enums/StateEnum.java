@@ -1,5 +1,6 @@
 package com.liwell.cinema.domain.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 /**
@@ -15,6 +16,7 @@ public enum StateEnum implements BaseEnum {
     VALID(1, "有效"),
     ;
 
+    @EnumValue
     private Integer value;
 
     private String description;
