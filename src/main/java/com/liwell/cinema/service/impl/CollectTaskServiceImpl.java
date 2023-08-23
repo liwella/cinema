@@ -317,6 +317,9 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
         Page<CollectTaskPageVO> page = baseMapper.pageCollectTask(dto);
         List<CollectTaskPageVO> records = page.getRecords();
         for (CollectTaskPageVO record : records) {
+            if (Objects.nonNull(record.getDuration())) {
+                record.setDuration(record.getDuration() / 24);
+            }
             record.setProcess(getTaskProcess(record.getId()));
         }
         return page;
