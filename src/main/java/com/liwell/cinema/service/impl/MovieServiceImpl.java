@@ -1,5 +1,6 @@
 package com.liwell.cinema.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,6 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -82,11 +84,21 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
     @Override
     public Boolean deleteMovie(IdDTO dto) {
         if (Objects.nonNull(dto.getId())) {
+            Movie movie = baseMapper.selectById(dto.getId());
+            if (Objects.nonNull(movie)) {
+                redisTemplate.delete(MOVIE_EXIST_ID + movie.getMvName());
+            }
             baseMapper.deleteById(dto.getId());
             playlistMapper.delete(new QueryWrapper<Playlist>().eq("movie_id", dto.getId()));
             return true;
         }
         if (Objects.nonNull(dto.getIds())) {
+            List<Movie> movies = baseMapper.selectList(new QueryWrapper<Movie>().in("id", dto.getIds()));
+            if (CollectionUtil.isNotEmpty(movies)) {
+                for (Movie movie : movies) {
+                    redisTemplate.delete(MOVIE_EXIST_ID + movie.getMvName());
+                }
+            }
             baseMapper.delete(new QueryWrapper<Movie>().in("id", dto.getIds()));
             playlistMapper.delete(new QueryWrapper<Playlist>().in("movie_id", dto.getIds()));
             return true;
@@ -111,4 +123,8 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         return movieId.intValue();
     }
 
+    @Override
+    public List<Integer> listNonSourceMovie() {
+        return baseMapper.listNonSourceMovie();
+    }
 }

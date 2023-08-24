@@ -9,6 +9,8 @@ import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.vo.MovieDetailVO;
 import com.liwell.cinema.domain.vo.MvPageVO;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -26,5 +28,7 @@ public interface MovieService extends IService<Movie> {
     Boolean addOrUpdate(MvAddDTO dto);
 
     Boolean deleteMovie(IdDTO dto);
+
+    List<Integer> listNonSourceMovie();
 
 }

@@ -1,28 +1,32 @@
 package com.liwell.cinema.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.SourceConfigUpdateDTO;
 import com.liwell.cinema.domain.entity.CategoryMapping;
+import com.liwell.cinema.domain.entity.CollectTask;
 import com.liwell.cinema.domain.entity.Playlist;
 import com.liwell.cinema.domain.entity.SourceConfig;
+import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.ScListSimpleVO;
-import com.liwell.cinema.domain.vo.SourceConfigListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.CategoryMappingMapper;
-import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
 import com.liwell.cinema.mapper.SourceConfigMapper;
+import com.liwell.cinema.service.CollectTaskService;
+import com.liwell.cinema.service.MovieService;
 import com.liwell.cinema.service.SourceConfigService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,8 +44,14 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
     private CategoryMappingMapper categoryMappingMapper;
     @Autowired
     private PlaylistMapper playlistMapper;
+
     @Autowired
-    private MovieMapper movieMapper;
+    private MovieService movieService;
+    @Autowired
+    private CollectTaskService collectTaskService;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public Boolean updateSourceConfig(SourceConfigUpdateDTO dto) {
@@ -58,6 +68,14 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
     @Override
     @Transactional
     public Boolean deleteSourceConfig(List<Integer> ids) {
+        log.info("删除采集源相关采集任务");
+        List<CollectTask> list = collectTaskService.list(new QueryWrapper<CollectTask>()
+                .in("source_id", ids).in("state", Arrays.asList(
+                        CollectTaskStateEnum.PAUSE, CollectTaskStateEnum.NOT_START, CollectTaskStateEnum.IN_EXECUTE)));
+        for (CollectTask collectTask : list) {
+            collectTaskService.stopCollectTask(collectTask.getId());
+        }
+        collectTaskService.remove(new QueryWrapper<CollectTask>().in("source_id", ids));
         log.info("删除采集源");
         baseMapper.deleteBatchIds(ids);
         log.info("删除采集源分类映射");
@@ -65,8 +83,13 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
         log.info("删除采集源视频播放列表");
         playlistMapper.delete(new QueryWrapper<Playlist>().in("source_id", ids));
         log.info("删除已无播放资源的影片");
-        movieMapper.deleteNonSourceMovie();
-        return true;
+        List<Integer> mvIds = movieService.listNonSourceMovie();
+        if (CollectionUtil.isEmpty(mvIds)) {
+            return true;
+        }
+        IdDTO idDTO = new IdDTO();
+        idDTO.setIds(mvIds);
+        return movieService.deleteMovie(idDTO);
     }
 
     @Override

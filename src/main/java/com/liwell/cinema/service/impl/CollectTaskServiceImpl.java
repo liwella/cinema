@@ -273,12 +273,12 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
      */
     @Override
     public Boolean stopCollectTask(Integer id) {
-        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
         CollectTaskStateEnum taskState = redisHelper.getCollectTaskState(CollectTaskStateEnum.class, id);
         if (taskState != CollectTaskStateEnum.FINISHED) {
             baseMapper.update(null, new UpdateWrapper<CollectTask>()
                     .set("state", CollectTaskStateEnum.STOP).set("stop_time", new Date()).eq("id", id));
-            opsForValue.set(COLLECT_STATE_KEY + id, CollectTaskStateEnum.STOP.getValue());
+            redisTemplate.delete(COLLECT_STATE_KEY + id);
+            redisTemplate.delete(COLLECT_PROCESS_KEY + id);
             return true;
         }
         throw new ResultException(ResultEnum.TASK_STATE_ERROR);

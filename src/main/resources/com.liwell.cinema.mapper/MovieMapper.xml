@@ -155,8 +155,8 @@
              score=values(score)
     </insert>
 
-    <delete id="deleteNonSourceMovie">
-        delete from movie mv where not exists (select 1 from playlist pl where mv.id=pl.movie_id)
-    </delete>
+    <select id="listNonSourceMovie" resultType="java.lang.Integer">
+        select mv.id from movie mv where not exists (select 1 from playlist pl where mv.id=pl.movie_id)
+    </select>
 
 </mapper>
