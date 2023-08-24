@@ -21,7 +21,7 @@ public interface MovieService extends IService<Movie> {
 
     MovieDetailVO getMovieDetail(IdDTO dto);
 
-    int generateMovieId();
+    int generateMovieId(String mvName);
 
     Boolean addOrUpdate(MvAddDTO dto);
 

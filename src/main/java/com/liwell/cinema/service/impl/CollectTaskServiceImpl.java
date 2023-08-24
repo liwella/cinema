@@ -171,7 +171,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                             continue;
                         }
                         Movie movie = new Movie().init(collectDetail);
-                        movie.setId(movieService.generateMovieId());
+                        movie.setId(movieService.generateMovieId(movie.getMvName()));
                         movie.setMvType(categoryMapping.get(collectDetail.getType_id()));
                         movies.add(movie);
                         playlists.add(generatePlaylist(collectDetail, movie.getId(), collectTask.getSourceId()));
