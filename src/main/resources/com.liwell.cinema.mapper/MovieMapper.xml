@@ -159,4 +159,13 @@
         select mv.id from movie mv where not exists (select 1 from playlist pl where mv.id=pl.movie_id)
     </select>
 
+    <select id="listMvNameId" parameterType="java.util.List" resultType="com.liwell.cinema.domain.po.MvNameIdPO">
+        select id, mv_name mvName from movie
+        <where>
+            <foreach collection="list" open="mv_name in (" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
 </mapper>

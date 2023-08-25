@@ -6,6 +6,7 @@ import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.MvAddDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.entity.Movie;
+import com.liwell.cinema.domain.po.MvNameIdPO;
 import com.liwell.cinema.domain.vo.MovieDetailVO;
 import com.liwell.cinema.domain.vo.MvPageVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -32,5 +33,7 @@ public interface MovieMapper extends BaseMapper<Movie> {
     void addOrUpdate(MvAddDTO dto);
 
     List<Integer> listNonSourceMovie();
+
+    List<MvNameIdPO> listMvNameId(List<String> keySet);
 
 }

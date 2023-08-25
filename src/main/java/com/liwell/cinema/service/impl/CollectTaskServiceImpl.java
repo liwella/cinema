@@ -13,13 +13,10 @@ import com.liwell.cinema.domain.dto.CollectTaskPageDTO;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.CollectTask;
 import com.liwell.cinema.domain.entity.Movie;
-import com.liwell.cinema.domain.entity.Playlist;
 import com.liwell.cinema.domain.entity.SourceConfig;
 import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
 import com.liwell.cinema.domain.enums.ResultEnum;
-import com.liwell.cinema.domain.po.CollectDetail;
-import com.liwell.cinema.domain.po.CollectDetailResult;
-import com.liwell.cinema.domain.po.CollectListResult;
+import com.liwell.cinema.domain.po.*;
 import com.liwell.cinema.domain.vo.CollectTaskPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.helper.RedisHelper;
@@ -40,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -162,7 +160,7 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                     }
                     List<CollectDetail> collectDetails = detailResult.getList();
                     List<Movie> movies = new ArrayList<>();
-                    List<Playlist> playlists = new ArrayList<>();
+                    List<PlaylistAddPO> playlistAddPOS = new ArrayList<>();
                     for (CollectDetail collectDetail : collectDetails) {
                         if (categoryMapping.get(collectDetail.getType_id()) == null) {
                             log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
@@ -171,10 +169,9 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                             continue;
                         }
                         Movie movie = new Movie().init(collectDetail);
-                        movie.setId(movieService.generateMovieId(movie.getMvName()));
                         movie.setMvType(categoryMapping.get(collectDetail.getType_id()));
                         movies.add(movie);
-                        playlists.add(generatePlaylist(collectDetail, movie.getId(), collectTask.getSourceId()));
+                        playlistAddPOS.add(generatePlaylist(collectDetail, collectTask.getSourceId()));
                         log.info("影片id：" + collectDetail.getVod_id() + "，片名：《" +
                                 collectDetail.getVod_name() + "》，类型：" + collectDetail.getType_id()
                                 + "-" + collectDetail.getType_name() + "，采集成功！");
@@ -184,7 +181,21 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
                         continue;
                     }
                     movieMapper.insertMovies(movies);
-                    playlistMapper.insertPlaylist(playlists);
+                    List<String> mvNameList = movies.stream().map(Movie::getMvName).collect(Collectors.toList());
+                    List<MvNameIdPO> mvNameIdPOList = movieMapper.listMvNameId(mvNameList);
+                    Map<String, Integer> mvNameIdMap = mvNameIdPOList.stream().collect(Collectors.toMap(MvNameIdPO::getMvName, MvNameIdPO::getId));
+
+                    ListIterator<PlaylistAddPO> iterator = playlistAddPOS.listIterator();
+                    while (iterator.hasNext()) {
+                        PlaylistAddPO next = iterator.next();
+                        Integer mvId = mvNameIdMap.get(next.getMvName());
+                        if (Objects.isNull(mvId)) {
+                            iterator.remove();
+                            continue;
+                        }
+                        next.setMovieId(mvId);
+                    }
+                    playlistMapper.insertPlaylist(playlistAddPOS);
                 } catch (Exception e) {
                     log.error("任务：" + collectTask.getId() + "，采集第：" + page + " 页时出错。", e);
                 }
@@ -219,15 +230,14 @@ public class CollectTaskServiceImpl extends ServiceImpl<CollectTaskMapper, Colle
      * 生成播放列表
      *
      * @param collectDetail
-     * @param movieId
      * @param sourceId
      * @return
      */
-    private Playlist generatePlaylist(CollectDetail collectDetail, Integer movieId, Integer sourceId) {
-        Playlist playlist = new Playlist();
-        playlist.setMovieId(movieId);
+    private PlaylistAddPO generatePlaylist(CollectDetail collectDetail, Integer sourceId) {
+        PlaylistAddPO playlist = new PlaylistAddPO();
         playlist.setSourceId(sourceId);
         playlist.setSourceMovieId(collectDetail.getVod_id());
+        playlist.setMvName(collectDetail.getVod_name());
         playlist.setPlayType(collectDetail.getVod_play_from());
         playlist.setPlayUrl(collectDetail.getVod_play_url());
         playlist.setSeparatorNote(collectDetail.getVod_play_note());

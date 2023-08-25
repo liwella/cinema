@@ -20,12 +20,10 @@ import com.liwell.cinema.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Description:
@@ -38,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements MovieService {
 
     private final String MOVIE_ID = "movie:id:";
-    private final String MOVIE_EXIST_ID = "movie:existsId:";
+    private final String MOVIE_EXIST = "movie:exist:";
 
     @Autowired
     private CategoryMappingMapper categoryMappingMapper;
@@ -73,10 +71,6 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
 
     @Override
     public Boolean addOrUpdate(MvAddDTO dto) {
-        if (Objects.isNull(dto.getMovieId())) {
-            int movieId = generateMovieId(null);
-            dto.setMovieId(movieId);
-        }
         baseMapper.addOrUpdate(dto);
         return true;
     }
@@ -86,7 +80,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         if (Objects.nonNull(dto.getId())) {
             Movie movie = baseMapper.selectById(dto.getId());
             if (Objects.nonNull(movie)) {
-                redisTemplate.delete(MOVIE_EXIST_ID + movie.getMvName());
+                redisTemplate.delete(MOVIE_EXIST + movie.getMvName());
             }
             baseMapper.deleteById(dto.getId());
             playlistMapper.delete(new QueryWrapper<Playlist>().eq("movie_id", dto.getId()));
@@ -96,7 +90,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             List<Movie> movies = baseMapper.selectList(new QueryWrapper<Movie>().in("id", dto.getIds()));
             if (CollectionUtil.isNotEmpty(movies)) {
                 for (Movie movie : movies) {
-                    redisTemplate.delete(MOVIE_EXIST_ID + movie.getMvName());
+                    redisTemplate.delete(MOVIE_EXIST + movie.getMvName());
                 }
             }
             baseMapper.delete(new QueryWrapper<Movie>().in("id", dto.getIds()));
@@ -106,25 +100,9 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
         throw new ResultException(ResultEnum.PARAMETER_ERROR);
     }
 
-    /**
-     * 根据影片名称获取 movieId
-     * @return
-     */
-    public int generateMovieId(String mvName) {
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        if (Objects.nonNull(mvName)) {
-            Object id = valueOperations.get(MOVIE_EXIST_ID + mvName);
-            if (Objects.nonNull(id)) {
-                return (int) id;
-            }
-        }
-        Long movieId = valueOperations.increment(MOVIE_ID);
-        valueOperations.set(MOVIE_EXIST_ID + mvName, movieId, 10, TimeUnit.DAYS);
-        return movieId.intValue();
-    }
-
     @Override
     public List<Integer> listNonSourceMovie() {
         return baseMapper.listNonSourceMovie();
     }
+
 }
