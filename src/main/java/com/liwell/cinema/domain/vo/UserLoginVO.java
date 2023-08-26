@@ -1,35 +1,41 @@
-package com.liwell.cinema.domain.dto;
+package com.liwell.cinema.domain.vo;
 
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.enums.SexEnum;
+import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * Description:
  *
  * @author Li
- * @date Created on 2023/4/1
+ * @date Created on 2023/7/29
  */
 @Data
-public class UserAddDTO {
+public class UserLoginVO {
 
-    @NotNull(message = "用户名称不能为空")
+    private Integer id;
+
     private String username;
 
-    @NotNull(message = "用户密码不能为空")
     private String password;
 
-    private String email;
-
     private String phone;
+
+    private String email;
 
     private String avatar;
 
     private SexEnum sex;
 
-    @NotNull(message = "角色不能为空")
+    private Date createTime;
+
+    private Date updateTime;
+
+    private StateEnum state;
+
     private Role role;
 
 }

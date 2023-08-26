@@ -1,12 +1,14 @@
 package com.liwell.cinema.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.liwell.cinema.domain.dto.LoginDTO;
-import com.liwell.cinema.domain.dto.UserAddDTO;
-import com.liwell.cinema.domain.dto.UserPageDTO;
+import com.liwell.cinema.domain.dto.*;
+import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
+import com.liwell.cinema.domain.vo.UserGetVO;
+import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
-import com.liwell.cinema.domain.vo.UserVO;
+import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.UserService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +45,12 @@ public class UserController {
 
     @PostMapping("/addUser")
     public Result addUser(@RequestBody @Valid UserAddDTO userAddDTO) {
-        userService.addUser(userAddDTO);
-        return ResultUtil.success();
+        return ResultUtil.trueOrFalse(userService.addUser(userAddDTO));
+    }
+
+    @PostMapping("/updateUser")
+    public Result updateUser(@RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+        return ResultUtil.trueOrFalse(userService.updateUser(userUpdateDTO));
     }
 
     @PostMapping("/pageUser")
@@ -53,8 +59,21 @@ public class UserController {
     }
 
     @PostMapping("/getUser")
-    public Result<UserVO> getUser() {
-        return ResultUtil.success(userService.getUser());
+    public Result<UserGetVO> getUser(@RequestBody IdDTO dto) {
+        return ResultUtil.success(userService.getUser(dto.getId()));
+    }
+
+    @PostMapping("/getLoginUser")
+    public Result<UserLoginVO> getLoginUser() {
+        return ResultUtil.success(userService.getLoginUser());
+    }
+
+    @PostMapping("/deleteUser")
+    public Result deleteUser(@RequestBody IdDTO dto) {
+        if (CollectionUtil.isEmpty(dto.getIds())) {
+            throw new ResultException(ResultEnum.PARAMETER_ERROR);
+        }
+        return ResultUtil.trueOrFalse(userService.removeByIds(dto.getIds()));
     }
 
 }

@@ -26,6 +26,7 @@ public enum ResultEnum implements BaseEnum {
     PERMISSION_ERROR(1103, "权限不足！"),
     NOT_ROLE_EXCEPTION(1104, "角色不存在"),
     NOT_LOGGING(1105, "用户未登录"),
+    USER_EXISTED(1106, "用户名已存在"),
 
     // 分类模块
     ALREADY_TOP(1201, "已是最上层/底层节点，无法移动"),

@@ -3,20 +3,24 @@ package com.liwell.cinema.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
+import com.liwell.cinema.domain.dto.UserUpdateDTO;
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.User;
 import com.liwell.cinema.domain.entity.UserRole;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.vo.LoginVO;
+import com.liwell.cinema.domain.vo.UserGetVO;
+import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
-import com.liwell.cinema.domain.vo.UserVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
@@ -72,15 +76,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void addUser(UserAddDTO userAddDTO) {
-        Role role = roleMapper.selectById(userAddDTO.getRoleId());
+    public Boolean addUser(UserAddDTO userAddDTO) {
+        Role role = roleMapper.selectById(userAddDTO.getRole().getId());
         if (Objects.isNull(role)) {
             throw new ResultException(ResultEnum.NOT_ROLE_EXCEPTION);
         }
-        User user = BeanUtil.copyProperties(userAddDTO, User.class, "roleId");
+        List<User> userList = baseMapper.selectList(
+                new QueryWrapper<User>().eq("username", userAddDTO.getUsername()));
+        if (CollectionUtil.isNotEmpty(userList)) {
+            throw new ResultException(ResultEnum.USER_EXISTED);
+        }
+        User user = BeanUtil.copyProperties(userAddDTO, User.class, "role");
         baseMapper.insert(user);
-        UserRole userRole = new UserRole(user.getId(), userAddDTO.getRoleId());
+        UserRole userRole = new UserRole(user.getId(), userAddDTO.getRole().getId());
         userRoleMapper.insert(userRole);
+        return true;
     }
 
     @Override
@@ -89,13 +99,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserVO getUser() {
-        Integer userId = StpUtil.getLoginIdAsInt();
-        User user = baseMapper.selectById(userId);
-        UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
-        Role role = baseMapper.getUserRole(userId);
-        userVO.setRole(role);
-        return userVO;
+    public UserGetVO getUser(Integer id) {
+        User user = baseMapper.selectById(id);
+        if (Objects.isNull(user)) {
+            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
+        }
+        UserGetVO userGetVO = BeanUtil.copyProperties(user, UserGetVO.class);
+        Role role = baseMapper.getUserRole(id);
+        userGetVO.setRole(role);
+        return userGetVO;
     }
 
+    @Override
+    public UserLoginVO getLoginUser() {
+        Integer userId = StpUtil.getLoginIdAsInt();
+        User user = baseMapper.selectById(userId);
+        UserLoginVO userLoginVO = BeanUtil.copyProperties(user, UserLoginVO.class);
+        Role role = baseMapper.getUserRole(userId);
+        userLoginVO.setRole(role);
+        return userLoginVO;
+    }
+
+    @Override
+    public Boolean updateUser(UserUpdateDTO userUpdateDTO) {
+        User user = baseMapper.selectById(userUpdateDTO.getId());
+        if (Objects.isNull(user)) {
+            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
+        }
+        baseMapper.updateUser(userUpdateDTO);
+        userRoleMapper.update(null, new UpdateWrapper<UserRole>()
+                .set("role_id", userUpdateDTO.getRole().getId()).eq("user_id", userUpdateDTO.getId()));
+        return true;
+    }
 }

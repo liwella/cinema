@@ -1,5 +1,6 @@
 package com.liwell.cinema.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.enums.SexEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
@@ -28,8 +29,10 @@ public class UserPageVO {
 
     private SexEnum sex;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
     private StateEnum state;

@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
+import com.liwell.cinema.domain.dto.UserUpdateDTO;
 import com.liwell.cinema.domain.entity.User;
 import com.liwell.cinema.domain.vo.LoginVO;
+import com.liwell.cinema.domain.vo.UserGetVO;
+import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
-import com.liwell.cinema.domain.vo.UserVO;
 
 import java.util.List;
 
@@ -28,10 +30,14 @@ public interface UserService extends IService<User> {
 
     List<String> listUserRole(Integer userId);
 
-    void addUser(UserAddDTO userAddDTO);
+    Boolean addUser(UserAddDTO userAddDTO);
 
     Page<UserPageVO> pageUser(UserPageDTO dto);
 
-    UserVO getUser();
+    UserLoginVO getLoginUser();
+
+    Boolean updateUser(UserUpdateDTO userUpdateDTO);
+
+    UserGetVO getUser(Integer id);
 
 }
