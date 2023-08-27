@@ -18,6 +18,8 @@ import java.util.List;
 @Repository
 public interface MenuMapper extends BaseMapper<Menu> {
 
-    List<MenuListVO> listMenu(Integer userId);
+    List<MenuListVO> listUserMenu(Integer userId);
+
+    List<MenuListVO> listMenu();
 
 }

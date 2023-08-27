@@ -1,37 +1,31 @@
-package com.liwell.cinema.domain.vo;
+package com.liwell.cinema.domain.dto;
 
 import com.liwell.cinema.domain.enums.MenuTypeEnum;
 import lombok.Data;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  * Description:
  *
  * @author Li
- * @date Created on 2023/4/5
+ * @date Created on 2023/8/27
  */
 @Data
-public class MenuListVO {
+public class MenuAddDTO {
 
-    private Integer id;
-
+    @NotNull(message = "菜单/权限名称不能为空")
     private String menuName;
 
     private String url;
 
     private String permission;
 
+    @NotNull(message = "类型不能为空")
     private MenuTypeEnum type;
 
     private String icon;
 
-    private Integer level;
-
     private Integer parentId;
-
-    private Integer sort;
-
-    private List<MenuListVO> children;
 
 }
