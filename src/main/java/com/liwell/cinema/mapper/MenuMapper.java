@@ -22,4 +22,6 @@ public interface MenuMapper extends BaseMapper<Menu> {
 
     List<MenuListVO> listMenu();
 
+    Integer getMaxSort(Integer parentId);
+
 }

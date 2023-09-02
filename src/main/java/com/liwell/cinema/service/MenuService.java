@@ -2,6 +2,7 @@ package com.liwell.cinema.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
+import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.vo.MenuListVO;
 
@@ -20,5 +21,9 @@ public interface MenuService extends IService<Menu> {
     Boolean addMenu(MenuAddDTO dto);
 
     List<MenuListVO> listMenu();
+
+    Boolean moveMenu(MenuMoveDTO dto);
+
+    Boolean deleteMenu(List<Integer> ids);
 
 }

@@ -4,19 +4,21 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
+import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.enums.MenuTypeEnum;
+import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.MenuListVO;
+import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.MenuMapper;
 import com.liwell.cinema.service.MenuService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -74,6 +76,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
+    @Transactional
+    public Boolean deleteMenu(List<Integer> ids) {
+        baseMapper.deleteBatchIds(ids);
+        List<Menu> children = baseMapper.selectList(new QueryWrapper<Menu>().in("parent_id", ids));
+        if (CollectionUtil.isEmpty(children)) {
+            return true;
+        }
+        List<Integer> childrenIds = children.stream().map(Menu::getId).collect(Collectors.toList());
+        deleteMenu(childrenIds);
+        return true;
+    }
+
+    @Override
     public Boolean addMenu(MenuAddDTO dto) {
         Menu menu = BeanUtil.copyProperties(dto, Menu.class);
         List<Menu> list;
@@ -92,6 +107,40 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         }
         baseMapper.insert(menu);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean moveMenu(MenuMoveDTO dto) {
+        Menu menu = baseMapper.selectById(dto.getId());
+        if (menu == null) {
+            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
+        }
+        Map<String, Integer> params = new HashMap<>();
+        params.put("parent_id", menu.getParentId());
+        if (dto.getUp()) {
+            if (menu.getSort() == 1) {
+                throw new ResultException(ResultEnum.ALREADY_TOP);
+            }
+            params.put("sort", menu.getSort() - 1);
+            Menu up = baseMapper.selectOne(new QueryWrapper<Menu>().allEq(params));
+            transferPosition(up, menu);
+        } else {
+            if (menu.getSort().equals(baseMapper.getMaxSort(menu.getParentId()))) {
+                throw new ResultException(ResultEnum.ALREADY_TOP);
+            }
+            params.put("sort", menu.getSort() + 1);
+            Menu down = baseMapper.selectOne(new QueryWrapper<Menu>().allEq(params));
+            transferPosition(menu, down);
+        }
+        return true;
+    }
+
+    private void transferPosition(Menu up, Menu down) {
+        baseMapper.update(null, new UpdateWrapper<Menu>()
+                .set("sort", down.getSort() - 1).eq("id", down.getId()));
+        baseMapper.update(null, new UpdateWrapper<Menu>()
+                .set("sort", up.getSort() + 1).eq("id", up.getId()));
     }
 
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
+import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.enums.ResultEnum;
@@ -60,12 +61,17 @@ public class MenuController {
                 .eq("id", dto.getId())));
     }
 
+    @PostMapping("/moveMenu")
+    public Result moveMenu(@RequestBody @Valid MenuMoveDTO dto) {
+        return ResultUtil.trueOrFalse(menuService.moveMenu(dto));
+    }
+
     @PostMapping("/deleteMenu")
     public Result deleteMenu(@RequestBody IdDTO dto) {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        return ResultUtil.trueOrFalse(menuService.removeByIds(dto.getIds()));
+        return ResultUtil.trueOrFalse(menuService.deleteMenu(dto.getIds()));
     }
 
 }
