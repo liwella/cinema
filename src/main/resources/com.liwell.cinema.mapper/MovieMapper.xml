@@ -77,6 +77,7 @@
                 and mv.mv_year=#{mvYear}
             </if>
         </where>
+        order by update_date desc
     </select>
 
     <select id="getMovieDetail" parameterType="com.liwell.cinema.domain.dto.IdDTO" resultType="com.liwell.cinema.domain.vo.MovieDetailVO">
