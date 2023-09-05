@@ -1,0 +1,15 @@
+version: '3'
+services:
+  dunhao:
+    image: registry.cn-hangzhou.aliyuncs.com/li_namespace/dunhao:0.0.2
+    ports:
+      - "9000:9000"
+    container_name: dunhao
+    volumes:
+      - /opt/log/dunhao:/logs
+      - /opt/app/dunhao/config:/config
+      - /etc/localtime:/etc/localtime
+    privileged: true
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - JAVA_OPTS=-Xms256M -Xmx512M
