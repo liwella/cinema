@@ -1,4 +1,4 @@
-FROM java:8
+FROM adoptopenjdk/openjdk8:latest
 MAINTAINER lty
 EXPOSE 9000
 ADD target/*.jar app.jar

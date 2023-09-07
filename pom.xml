@@ -193,7 +193,7 @@
                             <include>${project.build.finalName}.jar</include>
                         </resource>
                     </resources>
-                    <dockerHost>http://1.12.233.74:8003</dockerHost>
+                    <dockerHost>http://10.19.13.60:2375</dockerHost>
                     <serverId>docker-aliyun</serverId>
                     <registryUrl>${docker.repository}</registryUrl>
                     <pushImage>true</pushImage>
