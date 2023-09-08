@@ -8,13 +8,18 @@ import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.RoleAddDTO;
 import com.liwell.cinema.domain.dto.RoleUpdateDTO;
 import com.liwell.cinema.domain.entity.Role;
+import com.liwell.cinema.domain.entity.RoleCategory;
+import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.RoleListVO;
 import com.liwell.cinema.exception.ResultException;
+import com.liwell.cinema.service.RoleCategoryService;
+import com.liwell.cinema.service.RoleMenuService;
 import com.liwell.cinema.service.RoleService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +41,10 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RoleMenuService roleMenuService;
+    @Autowired
+    private RoleCategoryService roleCategoryService;
 
     @PostMapping("/listRole")
     public Result<List<RoleListVO>> listRole() {
@@ -62,10 +71,13 @@ public class RoleController {
     }
 
     @PostMapping("/deleteRole")
+    @Transactional
     public Result deleteRole(@RequestBody IdDTO dto) {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
+        roleMenuService.remove(new QueryWrapper<RoleMenu>().in("role_id", dto.getIds()));
+        roleCategoryService.remove(new QueryWrapper<RoleCategory>().in("role_id", dto.getIds()));
         return ResultUtil.trueOrFalse(roleService.removeByIds(dto.getIds()));
     }
 
