@@ -14,4 +14,26 @@
         </where>
     </select>
 
+    <select id="listUserCategory" parameterType="java.util.Map" resultType="com.liwell.cinema.domain.entity.Category">
+        select
+            ct.id id,
+            ct.name name,
+            ct.sort sort,
+            ct.parent parent,
+            ct.level level
+        from role_category rc
+        join category ct
+        on rc.category_id=ct.id
+        <where>
+            rc.role_id=#{roleId}
+            <if test="parent==null">
+                and ct.parent is null
+            </if>
+            <if test="parent!=null">
+                and ct.parent=#{parent}
+            </if>
+        </where>
+        order by ct.sort
+    </select>
+
 </mapper>

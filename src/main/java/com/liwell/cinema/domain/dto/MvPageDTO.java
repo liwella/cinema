@@ -21,4 +21,6 @@ public class MvPageDTO extends Page {
 
     private Integer mvYear;
 
+    private Integer roleId;
+
 }

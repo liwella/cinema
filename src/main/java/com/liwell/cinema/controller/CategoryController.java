@@ -1,5 +1,6 @@
 package com.liwell.cinema.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -8,10 +9,12 @@ import com.liwell.cinema.domain.dto.CategoryMoveDTO;
 import com.liwell.cinema.domain.dto.CategoryUpdateDTO;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.entity.Category;
+import com.liwell.cinema.domain.entity.UserRole;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.CategoryListVO;
 import com.liwell.cinema.exception.ResultException;
+import com.liwell.cinema.mapper.UserRoleMapper;
 import com.liwell.cinema.service.CategoryService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     /**
      * 分类展示
@@ -43,6 +48,20 @@ public class CategoryController {
     @PostMapping("/listCategory")
     public Result<List<CategoryListVO>> listCategory() {
         return ResultUtil.success(categoryService.listCategory(null));
+    }
+
+    /**
+     * 用户分类展示
+     * @return
+     */
+    @PostMapping("/listUserCategory")
+    public Result<List<CategoryListVO>> listUserCategory() {
+        if (!StpUtil.isLogin()) {
+            throw new ResultException(ResultEnum.NOT_LOGGING);
+        }
+        Integer roleId = userRoleMapper.selectOne(
+                new QueryWrapper<UserRole>().eq("user_id", StpUtil.getLoginIdAsInt())).getRoleId();
+        return ResultUtil.success(categoryService.listUserCategory(roleId,null));
     }
 
     /**

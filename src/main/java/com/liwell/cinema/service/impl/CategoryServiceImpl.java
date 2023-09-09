@@ -47,6 +47,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     }
 
     @Override
+    public List<CategoryListVO> listUserCategory(Integer roleId, Integer parent) {
+        Map<String, Integer> params = new HashMap<>();
+        params.put("parent", parent);
+        params.put("roleId", roleId);
+        List<Category> categories = baseMapper.listUserCategory(params);
+        if (CollectionUtil.isEmpty(categories)) {
+            return new ArrayList<>();
+        }
+        List<CategoryListVO> result = BeanUtil.copyToList(categories, CategoryListVO.class);
+        for (CategoryListVO categoryListVO : result) {
+            categoryListVO.setChildren(listUserCategory(roleId, categoryListVO.getId()));
+        }
+        return result;
+    }
+
+    @Override
     public Boolean addCategory(CategoryAddDTO dto) {
         Integer sort;
         int level;

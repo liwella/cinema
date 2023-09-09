@@ -1,5 +1,6 @@
 package com.liwell.cinema.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,17 +9,17 @@ import com.liwell.cinema.domain.dto.MvAddDTO;
 import com.liwell.cinema.domain.dto.MvPageDTO;
 import com.liwell.cinema.domain.entity.Movie;
 import com.liwell.cinema.domain.entity.Playlist;
+import com.liwell.cinema.domain.entity.UserRole;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.MovieDetailVO;
 import com.liwell.cinema.domain.vo.MvPageVO;
 import com.liwell.cinema.exception.ResultException;
-import com.liwell.cinema.mapper.CategoryMappingMapper;
 import com.liwell.cinema.mapper.MovieMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
+import com.liwell.cinema.mapper.UserRoleMapper;
 import com.liwell.cinema.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,11 +36,9 @@ import java.util.Objects;
 public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements MovieService {
 
     @Autowired
-    private CategoryMappingMapper categoryMappingMapper;
-    @Autowired
     private PlaylistMapper playlistMapper;
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private UserRoleMapper userRoleMapper;
 
     /**
      * 分页列表
@@ -48,6 +47,12 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
      */
     @Override
     public Page<MvPageVO> pageMovie(MvPageDTO mvPageDTO) {
+        Integer roleId = 2;
+        if (StpUtil.isLogin()) {
+            Integer userId = StpUtil.getLoginIdAsInt();
+            roleId = userRoleMapper.selectOne(new QueryWrapper<UserRole>().eq("user_id", userId)).getRoleId();
+        }
+        mvPageDTO.setRoleId(roleId);
         return baseMapper.pageMovie(mvPageDTO);
     }
 

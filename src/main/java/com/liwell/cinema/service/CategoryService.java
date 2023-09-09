@@ -18,6 +18,8 @@ public interface CategoryService extends IService<Category> {
 
     List<CategoryListVO> listCategory(Integer parent);
 
+    List<CategoryListVO> listUserCategory(Integer roleId, Integer parent);
+
     Boolean addCategory(CategoryAddDTO dto);
 
     Boolean moveCategory(CategoryMoveDTO dto);

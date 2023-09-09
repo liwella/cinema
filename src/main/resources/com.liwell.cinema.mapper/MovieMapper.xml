@@ -63,7 +63,10 @@
         from movie mv
         left join category cg
         on mv.mv_type=cg.id
+        join role_category rc
+        on mv.mv_type=rc.category_id
         <where>
+            rc.role_id=#{roleId}
             <if test="mvName!=null and mvName!=''">
                 and mv.mv_name like concat('%',#{mvName},'%')
             </if>
