@@ -8,11 +8,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.CategoryAddDTO;
 import com.liwell.cinema.domain.dto.CategoryMoveDTO;
 import com.liwell.cinema.domain.entity.Category;
+import com.liwell.cinema.domain.entity.RoleCategory;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.CategoryListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.CategoryMapper;
+import com.liwell.cinema.mapper.RoleCategoryMapper;
 import com.liwell.cinema.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,9 @@ import java.util.Map;
  */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
+
+    @Autowired
+    private RoleCategoryMapper roleCategoryMapper;
 
     @Override
     public List<CategoryListVO> listCategory(Integer parent) {
@@ -63,6 +69,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     }
 
     @Override
+    @Transactional
     public Boolean addCategory(CategoryAddDTO dto) {
         Integer sort;
         int level;
@@ -85,6 +92,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         category.setParent(parentNumber);
         category.setLevel(level);
         baseMapper.insert(category);
+        roleCategoryMapper.insert(new RoleCategory(1, category.getId()));
         return true;
     }
 

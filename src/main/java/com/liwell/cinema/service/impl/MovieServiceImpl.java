@@ -1,6 +1,7 @@
 package com.liwell.cinema.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -83,7 +84,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie> implements
             playlistMapper.delete(new QueryWrapper<Playlist>().eq("movie_id", dto.getId()));
             return true;
         }
-        if (Objects.nonNull(dto.getIds())) {
+        if (CollectionUtil.isNotEmpty(dto.getIds())) {
             baseMapper.delete(new QueryWrapper<Movie>().in("id", dto.getIds()));
             playlistMapper.delete(new QueryWrapper<Playlist>().in("movie_id", dto.getIds()));
             return true;

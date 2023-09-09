@@ -1,17 +1,20 @@
 package com.liwell.cinema.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.Menu;
+import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.MenuListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.MenuService;
+import com.liwell.cinema.service.RoleMenuService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +37,8 @@ public class MenuController {
 
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private RoleMenuService roleMenuService;
 
     @PostMapping("/listUserMenu")
     public Result<List<MenuListVO>> listUserMenu() {
@@ -71,6 +76,7 @@ public class MenuController {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
+        roleMenuService.remove(new QueryWrapper<RoleMenu>().in("menu_id", dto.getIds()));
         return ResultUtil.trueOrFalse(menuService.deleteMenu(dto.getIds()));
     }
 
