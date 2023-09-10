@@ -3,7 +3,6 @@ package com.liwell.cinema.domain.dto;
 import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -28,5 +27,7 @@ public class SourceConfigUpdateDTO {
 
     @NotNull(message = "状态不能为空")
     private StateEnum state;
+
+    private String player;
 
 }

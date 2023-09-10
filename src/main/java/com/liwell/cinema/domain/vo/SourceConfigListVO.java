@@ -20,6 +20,8 @@ public class SourceConfigListVO {
 
     private String detailUrl;
 
+    private String player;
+
     private StateEnum state;
 
 }

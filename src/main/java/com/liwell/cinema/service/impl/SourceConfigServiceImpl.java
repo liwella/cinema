@@ -61,7 +61,8 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
         }
         baseMapper.update(null, new UpdateWrapper<SourceConfig>()
                 .set("source_name", dto.getSourceName()).set("list_url", dto.getListUrl())
-                .set("detail_url", dto.getDetailUrl()).set("state", dto.getState()).eq("id", dto.getId()));
+                .set("detail_url", dto.getDetailUrl()).set("state", dto.getState())
+                .set("player", dto.getPlayer()).eq("id", dto.getId()));
         return true;
     }
 

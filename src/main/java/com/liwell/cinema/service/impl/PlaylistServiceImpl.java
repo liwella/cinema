@@ -10,7 +10,6 @@ import com.liwell.cinema.domain.vo.PlayTypeVO;
 import com.liwell.cinema.domain.vo.PlaylistVO;
 import com.liwell.cinema.mapper.PlaylistMapper;
 import com.liwell.cinema.service.PlaylistService;
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +43,19 @@ public class PlaylistServiceImpl extends ServiceImpl<PlaylistMapper, Playlist> i
                 List<PlayDetailVO> playDetailVOS = new ArrayList<>();
                 for (String playDetail : playDetails) {
                     PlayDetailVO playDetailVO = new PlayDetailVO();
-                    String[] tagAndUrl = playDetail.split("\\$");
-                    playDetailVO.setPlayTag(tagAndUrl[0]);
-                    playDetailVO.setPlayUrl(tagAndUrl[1]);
+                    if (playDetail.contains("$")) {
+                        String[] tagAndUrl = playDetail.split("\\$");
+                        playDetailVO.setPlayTag(tagAndUrl[0]);
+                        playDetailVO.setPlayUrl(tagAndUrl[1]);
+                    } else {
+                        playDetailVO.setPlayTag("HD");
+                        playDetailVO.setPlayUrl(playDetail);
+                    }
                     playDetailVOS.add(playDetailVO);
                 }
                 PlayTypeVO playTypeVO = new PlayTypeVO();
                 playTypeVO.setPlayType(playTypes[i]);
+                playTypeVO.setPlayer(playlistPO.getPlayer());
                 playTypeVO.setPlayDetailList(playDetailVOS);
                 playTypeVOS.add(playTypeVO);
             }

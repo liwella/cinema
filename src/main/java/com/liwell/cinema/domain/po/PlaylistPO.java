@@ -14,4 +14,6 @@ public class PlaylistPO extends Playlist {
 
     private String sourceName;
 
+    private String player;
+
 }

@@ -34,7 +34,8 @@
                pl.play_type playType,
                pl.play_url playUrl,
                pl.separator_note separatorNote,
-               sc.source_name sourceName
+               sc.source_name sourceName,
+               sc.player player
         from playlist pl
         left join source_config sc
         on pl.source_id=sc.id

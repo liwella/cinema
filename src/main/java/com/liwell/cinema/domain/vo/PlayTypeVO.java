@@ -15,6 +15,8 @@ public class PlayTypeVO {
 
     private String playType;
 
+    private String player;
+
     private List<PlayDetailVO> playDetailList;
 
 }

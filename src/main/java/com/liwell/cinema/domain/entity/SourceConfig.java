@@ -20,6 +20,8 @@ public class SourceConfig {
 
     private String detailUrl;
 
+    private String player;
+
     private StateEnum state;
 
 }

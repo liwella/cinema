@@ -17,4 +17,6 @@ public class SourceConfigAddDTO {
 
     private String detailUrl;
 
+    private String player;
+
 }
