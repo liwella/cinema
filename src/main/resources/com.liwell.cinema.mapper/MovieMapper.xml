@@ -5,6 +5,7 @@
     <insert id="insertMovies" parameterType="java.util.List">
         insert into movie
             (id,
+             hash_id,
              mv_name,
              mv_type,
              mv_area,
@@ -22,6 +23,7 @@
         values 
         <foreach collection="movies" item="item" separator=",">
             (#{item.id},
+             crc32(#{item.mvName}),
              #{item.mvName},
              #{item.mvType},
              #{item.mvArea},
