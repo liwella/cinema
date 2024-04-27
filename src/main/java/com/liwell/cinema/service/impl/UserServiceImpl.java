@@ -1,5 +1,6 @@
 package com.liwell.cinema.service.impl;
 
+import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
@@ -26,6 +28,8 @@ import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
 import com.liwell.cinema.mapper.UserRoleMapper;
 import com.liwell.cinema.service.UserService;
+import com.liwell.cinema.util.SessionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,13 +54,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public LoginVO login(LoginDTO dto) {
         User user = baseMapper.selectOne(new QueryWrapper<User>()
                 .eq("username", dto.getUsername()).eq("state", StateEnum.VALID));
-        if (Objects.isNull(user) || !dto.getPassword().equals(user.getPassword())) {
-            throw new ResultException(ResultEnum.USER_PWD_ERROR);
+        if (Objects.isNull(user)) {
+            throw new ResultException(ResultEnum.USER_NOT_EXISTS);
+        }
+        if (StringUtils.isBlank(dto.getCaptcha()) || !dto.getCaptcha()
+                .equals(SessionUtils.getSessionAttribute(Constants.CAPTCHA_KEY))) {
+            throw new ResultException(ResultEnum.CAPTCHA_ERROR);
+        }
+        boolean checkPw = BCrypt.checkpw(dto.getPassword(), user.getPassword());
+        if (!checkPw) {
+            throw new ResultException(ResultEnum.PWD_ERROR);
         }
         StpUtil.login(user.getId());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         LoginVO loginVO = new LoginVO();
         loginVO.setToken(tokenInfo.getTokenValue());
+        return loginVO;
+    }
+
+    @Override
+    public LoginVO refreshToken() {
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+        StpUtil.login(tokenInfo.getLoginId());
+        SaTokenInfo newTokenInfo = StpUtil.getTokenInfo();
+        LoginVO loginVO = new LoginVO();
+        loginVO.setToken(newTokenInfo.getTokenValue());
         return loginVO;
     }
 
@@ -77,10 +99,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Boolean addUser(UserAddDTO userAddDTO) {
-        Role role = roleMapper.selectById(userAddDTO.getRole().getId());
-        if (Objects.isNull(role)) {
-            throw new ResultException(ResultEnum.NOT_ROLE_EXCEPTION);
-        }
         List<User> userList = baseMapper.selectList(
                 new QueryWrapper<User>().eq("username", userAddDTO.getUsername()));
         if (CollectionUtil.isNotEmpty(userList)) {
@@ -88,8 +106,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         User user = BeanUtil.copyProperties(userAddDTO, User.class, "role");
         baseMapper.insert(user);
-        UserRole userRole = new UserRole(user.getId(), userAddDTO.getRole().getId());
-        userRoleMapper.insert(userRole);
+        if (CollectionUtil.isEmpty(userAddDTO.getRoleIds())) {
+            return true;
+        }
+        List<Role> roles = roleMapper.selectList(new QueryWrapper<Role>().in("id", userAddDTO.getRoleIds()));
+        for (Role role : roles) {
+            UserRole userRole = new UserRole(user.getId(), role.getId());
+            userRoleMapper.insert(userRole);
+        }
         return true;
     }
 

@@ -21,13 +21,15 @@ public enum ResultEnum implements BaseEnum {
     THIRD_INTERFACE_ERROR(1005, "调用第三方接口出错！"),
 
     // 用户模块
-    USER_PWD_ERROR(1101, "用户名或秘密错误！"),
+    PWD_ERROR(1101, "用户名或秘密错误！"),
     LOGGING_ERROR(1102, "登录信息错误"),
     PERMISSION_ERROR(1103, "权限不足！"),
     NOT_ROLE_EXCEPTION(1104, "角色不存在"),
     NOT_LOGGING(1105, "用户未登录"),
     USER_EXISTED(1106, "用户名已存在"),
     ROLE_CODE_EXISTS(1107, "角色编码已存在"),
+    USER_NOT_EXISTS(1108, "用户不存在"),
+    CAPTCHA_ERROR(1109, "验证码错误"),
 
     // 分类模块
     ALREADY_TOP(1201, "已是最上层/底层节点，无法移动"),

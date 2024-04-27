@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @date Created on 2023/3/15
  */
 @Configuration
-public class SatokenConfig implements WebMvcConfigurer {
+public class SaTokenConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -10,4 +10,6 @@ public class Constants {
 
     public static final String JWT_KEY = "123456";
 
+    public static final String CAPTCHA_KEY = "captchaKey";
+
 }

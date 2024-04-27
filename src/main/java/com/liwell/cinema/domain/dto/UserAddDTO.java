@@ -1,10 +1,10 @@
 package com.liwell.cinema.domain.dto;
 
-import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.enums.SexEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Description:
@@ -30,6 +30,6 @@ public class UserAddDTO {
     private SexEnum sex;
 
     @NotNull(message = "角色不能为空")
-    private Role role;
+    private List<Integer> roleIds;
 
 }

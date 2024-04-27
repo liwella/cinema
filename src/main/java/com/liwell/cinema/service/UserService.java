@@ -40,4 +40,6 @@ public interface UserService extends IService<User> {
 
     UserGetVO getUser(Integer id);
 
+    LoginVO refreshToken();
+
 }

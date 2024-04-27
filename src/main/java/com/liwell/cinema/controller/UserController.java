@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.*;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
+import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserGetVO;
 import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
@@ -12,10 +13,7 @@ import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.UserService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -33,8 +31,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public Result login(@RequestBody LoginDTO loginDTO) {
+    public Result<LoginVO> login(@RequestBody LoginDTO loginDTO) {
         return ResultUtil.success(userService.login(loginDTO));
+    }
+
+    @GetMapping("/refreshToken")
+    public Result<LoginVO> refreshToken() {
+        return ResultUtil.success(userService.refreshToken());
     }
 
     @PostMapping("/logout")
