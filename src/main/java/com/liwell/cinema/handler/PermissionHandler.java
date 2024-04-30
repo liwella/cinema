@@ -1,12 +1,14 @@
 package com.liwell.cinema.handler;
 
 import cn.dev33.satoken.stp.StpInterface;
+import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -35,7 +37,8 @@ public class PermissionHandler implements StpInterface {
             return null;
         }
         Integer userId = Integer.parseInt(o.toString());
-        return userService.listUserRole(userId);
+        List<Role> roles = userService.listUserRole(userId);
+        return roles.stream().map(Role::getCode).collect(Collectors.toList());
     }
 
 }

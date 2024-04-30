@@ -24,7 +24,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     List<String> listUserPermission(Integer userId);
 
-    List<String> listUserRole(Integer userId);
+    List<Role> listUserRole(Integer userId);
 
     Page<UserPageVO> pageUser(UserPageDTO dto);
 

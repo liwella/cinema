@@ -93,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<String> listUserRole(Integer userId) {
+    public List<Role> listUserRole(Integer userId) {
         return baseMapper.listUserRole(userId);
     }
 
@@ -129,8 +129,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new ResultException(ResultEnum.DATA_NOT_EXIST);
         }
         UserGetVO userGetVO = BeanUtil.copyProperties(user, UserGetVO.class);
-        Role role = baseMapper.getUserRole(id);
-        userGetVO.setRole(role);
+        List<Role> roles = baseMapper.listUserRole(id);
+        if (CollectionUtil.isNotEmpty(roles)) {
+            userGetVO.setCurRole(roles.get(0));
+            userGetVO.setRoles(roles);
+        }
         return userGetVO;
     }
 

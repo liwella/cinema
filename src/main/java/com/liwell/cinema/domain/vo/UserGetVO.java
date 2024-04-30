@@ -6,6 +6,7 @@ import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Description:
@@ -36,6 +37,8 @@ public class UserGetVO {
 
     private StateEnum state;
 
-    private Role role;
+    private Role curRole;
+
+    private List<Role> roles;
 
 }

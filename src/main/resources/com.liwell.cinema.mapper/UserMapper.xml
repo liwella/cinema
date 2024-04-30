@@ -14,8 +14,10 @@
         where u.id=#{value}
     </select>
 
-    <select id="listUserRole" parameterType="java.lang.Integer" resultType="java.lang.String">
-        select r.code
+    <select id="listUserRole" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.entity.Role">
+        select r.id,
+               r.role_name roleName,
+               r.code
         from user u
         join user_role ur
         on u.id=user_role.user_id

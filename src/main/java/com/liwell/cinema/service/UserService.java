@@ -6,6 +6,7 @@ import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
 import com.liwell.cinema.domain.dto.UserUpdateDTO;
+import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.User;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserGetVO;
@@ -28,7 +29,7 @@ public interface UserService extends IService<User> {
 
     List<String> listUserPermission(Integer userId);
 
-    List<String> listUserRole(Integer userId);
+    List<Role> listUserRole(Integer userId);
 
     Boolean addUser(UserAddDTO userAddDTO);
 
