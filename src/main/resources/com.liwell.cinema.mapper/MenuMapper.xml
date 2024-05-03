@@ -5,13 +5,20 @@
     <select id="listUserMenu" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.vo.MenuListVO">
         select distinct
             m.id,
-            m.menu_name menuName,
-            m.url url,
-            m.permission permission,
+            m.name menuName,
+            m.code code,
             m.type type,
-            m.icon icon,
-            m.level level,
             m.parent_id parentId,
+            m.path path,
+            m.redirect redirect,
+            m.icon icon,
+            m.component component,
+            m.layout layout,
+            m.keep_alive keepAlive,
+            m.mothod method,
+            m.description description,
+            m.display display,
+            m.enable enable,
             m.sort sort
         from user_role ur
         join role_menu rm
