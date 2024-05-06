@@ -10,6 +10,7 @@ public class RedisConstants {
 
     public static final String COLLECT_STATE_KEY = "collect_state_key:";
     public static final String COLLECT_PROCESS_KEY = "collect_process_key:";
+    public static final String CAPTCHA_KEY = "captcha_key:";
 
     public static final String LOGIN_KEY = "login:";
 

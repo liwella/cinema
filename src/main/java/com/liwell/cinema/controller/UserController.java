@@ -1,6 +1,8 @@
 package com.liwell.cinema.controller;
 
+import cn.hutool.captcha.ICaptcha;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.*;
 import com.liwell.cinema.domain.enums.ResultEnum;
@@ -15,7 +17,9 @@ import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * Description:
@@ -77,6 +81,12 @@ public class UserController {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
         return ResultUtil.trueOrFalse(userService.removeByIds(dto.getIds()));
+    }
+
+    @GetMapping("/captcha")
+    public void captcha(HttpServletResponse response) throws IOException {
+        Pair<String, ICaptcha> captchaPair = userService.createCaptcha();
+        captchaPair.getValue().write(response.getOutputStream());
     }
 
 }

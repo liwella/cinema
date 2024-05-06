@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -32,6 +33,17 @@ public class RedisHelper {
         }
         Integer value = (Integer) taskState;
         return EnumUtils.get(enumClass, value);
+    }
+
+    public void cacheCaptcha(String captcha) {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(RedisConstants.CAPTCHA_KEY + captcha, 1, Duration.ofMinutes(1));
+    }
+
+    public Boolean validCaptcha(String captcha) {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        Object andExpire = valueOperations.getAndExpire(RedisConstants.CAPTCHA_KEY + captcha, Duration.ofSeconds(1));
+        return Objects.nonNull(andExpire);
     }
 
 }

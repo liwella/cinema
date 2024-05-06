@@ -3,13 +3,17 @@ package com.liwell.cinema.service.impl;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.CircleCaptcha;
+import cn.hutool.captcha.ICaptcha;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Pair;
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
@@ -24,11 +28,11 @@ import com.liwell.cinema.domain.vo.UserGetVO;
 import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
 import com.liwell.cinema.exception.ResultException;
+import com.liwell.cinema.helper.RedisHelper;
 import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
 import com.liwell.cinema.mapper.UserRoleMapper;
 import com.liwell.cinema.service.UserService;
-import com.liwell.cinema.util.SessionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RoleMapper roleMapper;
     @Autowired
     private UserRoleMapper userRoleMapper;
+    @Autowired
+    private RedisHelper redisHelper;
 
     @Override
     public LoginVO login(LoginDTO dto) {
@@ -57,8 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (Objects.isNull(user)) {
             throw new ResultException(ResultEnum.USER_NOT_EXISTS);
         }
-        if (StringUtils.isBlank(dto.getCaptcha()) || !dto.getCaptcha()
-                .equals(SessionUtils.getSessionAttribute(Constants.CAPTCHA_KEY))) {
+        if (StringUtils.isBlank(dto.getCaptcha()) || redisHelper.validCaptcha(dto.getCaptcha())) {
             throw new ResultException(ResultEnum.CAPTCHA_ERROR);
         }
         boolean checkPw = BCrypt.checkpw(dto.getPassword(), user.getPassword());
@@ -158,4 +163,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .set("role_id", userUpdateDTO.getRole().getId()).eq("user_id", userUpdateDTO.getId()));
         return true;
     }
+
+    @Override
+    public Pair<String, ICaptcha> createCaptcha() {
+        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(80, 40, 4, 4);
+        String key = UUID.randomUUID().toString(true);
+        Pair<String, ICaptcha> pair = Pair.of(key, captcha);
+        redisHelper.cacheCaptcha(pair.getKey());
+        return pair;
+    }
+
 }

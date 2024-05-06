@@ -1,5 +1,7 @@
 package com.liwell.cinema.service;
 
+import cn.hutool.captcha.ICaptcha;
+import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.LoginDTO;
@@ -42,5 +44,7 @@ public interface UserService extends IService<User> {
     UserGetVO getUser(Integer id);
 
     LoginVO refreshToken();
+
+    Pair<String, ICaptcha> createCaptcha();
 
 }
