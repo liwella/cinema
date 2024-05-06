@@ -1,10 +1,10 @@
 package com.liwell.cinema.service;
 
+import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
-import com.liwell.cinema.domain.vo.MenuListVO;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ import java.util.List;
  */
 public interface MenuService extends IService<Menu> {
 
-    List<MenuListVO> listUserMenu();
+    List<Tree<Long>> listUserMenu();
 
     Boolean addMenu(MenuAddDTO dto);
 
-    List<MenuListVO> listMenu();
+    List<Tree<Long>> listMenu();
 
     Boolean moveMenu(MenuMoveDTO dto);
 

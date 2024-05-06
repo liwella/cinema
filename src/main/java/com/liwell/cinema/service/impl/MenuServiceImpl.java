@@ -3,13 +3,15 @@ package com.liwell.cinema.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.tree.Tree;
+import cn.hutool.core.lang.tree.TreeNode;
+import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
-import com.liwell.cinema.domain.enums.MenuTypeEnum;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.MenuListVO;
 import com.liwell.cinema.exception.ResultException;
@@ -18,7 +20,10 @@ import com.liwell.cinema.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -31,12 +36,26 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     @Override
-    public List<MenuListVO> listUserMenu() {
+    public List<Tree<Long>> listUserMenu() {
         Integer userId = StpUtil.getLoginIdAsInt();
         List<MenuListVO> menuList = baseMapper.listUserMenu(userId);
         return refactor(menuList);
     }
 
+    private List<Tree<Long>> refactor(List<MenuListVO> menuList) {
+        List<TreeNode<Long>> nodes = menuList.stream().map(menu -> {
+            TreeNode<Long> treeNode = new TreeNode<>();
+            treeNode.setId(menu.getId().longValue());
+            treeNode.setParentId(menu.getParentId().longValue());
+            treeNode.setWeight(menu.getSort());
+            treeNode.setName(menu.getName());
+            treeNode.setExtra(BeanUtil.beanToMap(menu));
+            return treeNode;
+        }).collect(Collectors.toList());
+        return TreeUtil.build(nodes, null);
+    }
+
+    /* 旧版重构菜单
     private List<MenuListVO> refactor(List<MenuListVO> menuList) {
         if (CollectionUtil.isEmpty(menuList)) {
             return new ArrayList<>();
@@ -67,10 +86,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 Comparator.comparing(MenuListVO::getSort, Comparator.nullsLast(Integer::compareTo)))
                 .collect(Collectors.toList());
         menu.setChildren(children);
-    }
+    }*/
 
     @Override
-    public List<MenuListVO> listMenu() {
+    public List<Tree<Long>> listMenu() {
         List<MenuListVO> menuList = baseMapper.listMenu();
         return refactor(menuList);
     }

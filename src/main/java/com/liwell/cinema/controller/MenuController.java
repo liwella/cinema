@@ -1,6 +1,7 @@
 package com.liwell.cinema.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
@@ -11,7 +12,6 @@ import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
-import com.liwell.cinema.domain.vo.MenuListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.MenuService;
 import com.liwell.cinema.service.RoleMenuService;
@@ -41,12 +41,12 @@ public class MenuController {
     private RoleMenuService roleMenuService;
 
     @PostMapping("/listUserMenu")
-    public Result<List<MenuListVO>> listUserMenu() {
+    public Result<List<Tree<Long>>> listUserMenu() {
         return ResultUtil.success(menuService.listUserMenu());
     }
 
     @PostMapping("/listMenu")
-    public Result<List<MenuListVO>> listMenu() {
+    public Result<List<Tree<Long>>> listMenu() {
         return ResultUtil.success(menuService.listMenu());
     }
 
