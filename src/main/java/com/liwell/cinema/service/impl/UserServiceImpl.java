@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.LoginDTO;
 import com.liwell.cinema.domain.dto.UserAddDTO;
 import com.liwell.cinema.domain.dto.UserPageDTO;
@@ -25,7 +26,6 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserGetVO;
-import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.helper.RedisHelper;
@@ -70,9 +70,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!checkPw) {
             throw new ResultException(ResultEnum.PWD_ERROR);
         }
+        List<Role> roles = baseMapper.listUserRole(user.getId());
         StpUtil.login(user.getId());
-        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+        StpUtil.getSession().set(Constants.USERNAME_KEY, user.getUsername());
+        StpUtil.getSession().set(Constants.CURRENT_ROLE_KEY, roles.isEmpty() ? "" : roles.get(0).getCode());
+        StpUtil.getSession().set(Constants.ROLES_KEY, roles);
         LoginVO loginVO = new LoginVO();
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         loginVO.setToken(tokenInfo.getTokenValue());
         return loginVO;
     }
@@ -140,16 +144,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userGetVO.setRoles(roles);
         }
         return userGetVO;
-    }
-
-    @Override
-    public UserLoginVO getLoginUser() {
-        Integer userId = StpUtil.getLoginIdAsInt();
-        User user = baseMapper.selectById(userId);
-        UserLoginVO userLoginVO = BeanUtil.copyProperties(user, UserLoginVO.class);
-        Role role = baseMapper.getUserRole(userId);
-        userLoginVO.setRole(role);
-        return userLoginVO;
     }
 
     @Override

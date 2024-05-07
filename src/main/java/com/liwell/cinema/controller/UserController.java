@@ -1,5 +1,6 @@
 package com.liwell.cinema.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.captcha.ICaptcha;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
@@ -9,7 +10,6 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.LoginVO;
 import com.liwell.cinema.domain.vo.UserGetVO;
-import com.liwell.cinema.domain.vo.UserLoginVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.UserService;
@@ -71,8 +71,9 @@ public class UserController {
     }
 
     @PostMapping("/getLoginUser")
-    public Result<UserLoginVO> getLoginUser() {
-        return ResultUtil.success(userService.getLoginUser());
+    public Result<UserGetVO> getLoginUser() {
+        Integer userId = StpUtil.getLoginIdAsInt();
+        return ResultUtil.success(userService.getUser(userId));
     }
 
     @PostMapping("/deleteUser")

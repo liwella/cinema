@@ -19,6 +19,7 @@ spring:
         max-idle: 8
         max-active: 8
         max-wait: -1ms
+    password: 8@8ppksQ
   security:
     user:
       name: user

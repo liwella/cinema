@@ -15,7 +15,7 @@
             m.component component,
             m.layout layout,
             m.keep_alive keepAlive,
-            m.mothod method,
+            m.method method,
             m.description description,
             m.display display,
             m.enable enable,
@@ -32,16 +32,23 @@
 
     <select id="listMenu" resultType="com.liwell.cinema.domain.vo.MenuListVO">
         select distinct
-            id,
-            menu_name menuName,
-            url url,
-            permission permission,
-            type type,
-            icon icon,
-            level level,
-            parent_id parentId,
-            sort sort
-        from menu
+            m.id,
+            m.name menuName,
+            m.code code,
+            m.type type,
+            m.parent_id parentId,
+            m.path path,
+            m.redirect redirect,
+            m.icon icon,
+            m.component component,
+            m.layout layout,
+            m.keep_alive keepAlive,
+            m.method method,
+            m.description description,
+            m.display display,
+            m.enable enable,
+            m.sort sort
+        from menu m
     </select>
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">

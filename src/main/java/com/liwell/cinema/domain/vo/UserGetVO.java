@@ -21,6 +21,8 @@ public class UserGetVO {
 
     private String username;
 
+    private String nickname;
+
     private String password;
 
     private String phone;

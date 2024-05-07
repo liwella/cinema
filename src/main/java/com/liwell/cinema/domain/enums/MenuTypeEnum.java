@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 public enum MenuTypeEnum implements BaseEnum {
 
-    MENU(0, "目录"),
-    CATEGORY(1, "菜单"),
+    CATEGORY(0, "目录"),
+    MENU(1, "菜单"),
     PERMISSION(2, "权限")
     ;
 

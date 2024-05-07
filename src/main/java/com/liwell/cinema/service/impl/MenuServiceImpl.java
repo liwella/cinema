@@ -9,6 +9,7 @@ import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
@@ -35,18 +36,28 @@ import java.util.stream.Collectors;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
+
     @Override
-    public List<Tree<Long>> listUserMenu() {
+    public List<Tree<Integer>> listUserMenu() {
+        if (Constants.ROLE_ADMIN.equals(StpUtil.getSession().get(Constants.CURRENT_ROLE_KEY))) {
+            return listMenu();
+        }
         Integer userId = StpUtil.getLoginIdAsInt();
         List<MenuListVO> menuList = baseMapper.listUserMenu(userId);
         return refactor(menuList);
     }
 
-    private List<Tree<Long>> refactor(List<MenuListVO> menuList) {
-        List<TreeNode<Long>> nodes = menuList.stream().map(menu -> {
-            TreeNode<Long> treeNode = new TreeNode<>();
-            treeNode.setId(menu.getId().longValue());
-            treeNode.setParentId(menu.getParentId().longValue());
+    @Override
+    public List<Tree<Integer>> listMenu() {
+        List<MenuListVO> menuList = baseMapper.listMenu();
+        return refactor(menuList);
+    }
+
+    private List<Tree<Integer>> refactor(List<MenuListVO> menuList) {
+        List<TreeNode<Integer>> nodes = menuList.stream().map(menu -> {
+            TreeNode<Integer> treeNode = new TreeNode<>();
+            treeNode.setId(menu.getId());
+            treeNode.setParentId(menu.getParentId());
             treeNode.setWeight(menu.getSort());
             treeNode.setName(menu.getName());
             treeNode.setExtra(BeanUtil.beanToMap(menu));
@@ -87,12 +98,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 .collect(Collectors.toList());
         menu.setChildren(children);
     }*/
-
-    @Override
-    public List<Tree<Long>> listMenu() {
-        List<MenuListVO> menuList = baseMapper.listMenu();
-        return refactor(menuList);
-    }
 
     @Override
     @Transactional

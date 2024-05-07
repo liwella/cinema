@@ -41,12 +41,12 @@ public class MenuController {
     private RoleMenuService roleMenuService;
 
     @PostMapping("/listUserMenu")
-    public Result<List<Tree<Long>>> listUserMenu() {
+    public Result<List<Tree<Integer>>> listUserMenu() {
         return ResultUtil.success(menuService.listUserMenu());
     }
 
     @PostMapping("/listMenu")
-    public Result<List<Tree<Long>>> listMenu() {
+    public Result<List<Tree<Integer>>> listMenu() {
         return ResultUtil.success(menuService.listMenu());
     }
 

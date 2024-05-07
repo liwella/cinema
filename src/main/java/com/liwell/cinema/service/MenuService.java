@@ -16,11 +16,11 @@ import java.util.List;
  */
 public interface MenuService extends IService<Menu> {
 
-    List<Tree<Long>> listUserMenu();
+    List<Tree<Integer>> listUserMenu();
 
     Boolean addMenu(MenuAddDTO dto);
 
-    List<Tree<Long>> listMenu();
+    List<Tree<Integer>> listMenu();
 
     Boolean moveMenu(MenuMoveDTO dto);
 
