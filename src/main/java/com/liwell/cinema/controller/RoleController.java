@@ -67,7 +67,7 @@ public class RoleController {
             throw new ResultException(ResultEnum.NOT_ROLE_EXCEPTION);
         }
         return ResultUtil.trueOrFalse(roleService.update(
-                new UpdateWrapper<Role>().set("role_name", dto.getRoleName()).eq("id", dto.getId())));
+                new UpdateWrapper<Role>().set("role_name", dto.getName()).eq("id", dto.getId())));
     }
 
     @PostMapping("/deleteRole")

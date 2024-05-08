@@ -17,6 +17,6 @@ public class RoleUpdateDTO {
     private Integer id;
 
     @NotNull(message = "角色名称不能为空")
-    private String roleName;
+    private String name;
 
 }

@@ -5,7 +5,7 @@
     <select id="listUserMenu" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.vo.MenuListVO">
         select distinct
             m.id,
-            m.name menuName,
+            m.name name,
             m.code code,
             m.type type,
             m.parent_id parentId,
@@ -33,7 +33,7 @@
     <select id="listMenu" resultType="com.liwell.cinema.domain.vo.MenuListVO">
         select distinct
             m.id,
-            m.name menuName,
+            m.name name,
             m.code code,
             m.type type,
             m.parent_id parentId,

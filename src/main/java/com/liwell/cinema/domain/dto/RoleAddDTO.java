@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class RoleAddDTO {
 
     @NotNull(message = "角色名称不能为空")
-    private String roleName;
+    private String name;
 
     @NotNull(message = "角色编码不能为空")
     private String code;

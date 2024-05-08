@@ -16,7 +16,7 @@
 
     <select id="listUserRole" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.entity.Role">
         select r.id,
-               r.role_name roleName,
+               r.name,
                r.code
         from user u
         join user_role ur
@@ -37,7 +37,7 @@
         <result column="updateTime" property="updateTime" />
         <result column="state" property="state" />
         <association property="role" javaType="com.liwell.cinema.domain.entity.Role">
-            <result column="roleName" property="roleName" />
+            <result column="name" property="name" />
             <result column="code" property="code" />
             <result column="roleId" property="id" />
         </association>
