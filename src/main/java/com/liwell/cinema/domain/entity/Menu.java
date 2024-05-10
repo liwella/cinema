@@ -1,6 +1,6 @@
 package com.liwell.cinema.domain.entity;
 
-import com.liwell.cinema.domain.enums.MenuTypeEnum;
+import com.liwell.cinema.domain.enums.*;
 import lombok.Data;
 
 /**
@@ -14,19 +14,33 @@ public class Menu {
 
     private Integer id;
 
-    private String menuName;
+    private String name;
 
-    private String url;
-
-    private String permission;
+    private String code;
 
     private MenuTypeEnum type;
 
+    private Integer parentId;
+
+    private String path;
+
+    private String redirect;
+
     private String icon;
 
-    private Integer level;
+    private String component;
 
-    private Integer parentId;
+    private LayoutEnum layout;
+
+    private StateEnum keepAlive;
+
+    private MethodEnum method;
+
+    private String description;
+
+    private MenuDisplayEnum display;
+
+    private StateEnum enable;
 
     private Integer sort;
 

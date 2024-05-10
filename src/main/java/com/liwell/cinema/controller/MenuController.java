@@ -4,14 +4,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.liwell.cinema.domain.dto.IdDTO;
-import com.liwell.cinema.domain.dto.MenuAddDTO;
-import com.liwell.cinema.domain.dto.MenuMoveDTO;
-import com.liwell.cinema.domain.dto.MenuUpdateDTO;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.liwell.cinema.domain.dto.*;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
+import com.liwell.cinema.domain.vo.MenuListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.MenuService;
 import com.liwell.cinema.service.RoleMenuService;
@@ -48,6 +47,11 @@ public class MenuController {
     @PostMapping("/listMenu")
     public Result<List<Tree<Integer>>> listMenu() {
         return ResultUtil.success(menuService.listMenu());
+    }
+
+    @PostMapping("/pageChildMenu")
+    public Result<Page<MenuListVO>> pageChildMenu(@RequestBody MenuChildPageDTO dto) {
+        return ResultUtil.success(menuService.pageChildMenu(dto));
     }
 
     @PostMapping("/addMenu")

@@ -63,5 +63,26 @@
         </where>
     </select>
 
+    <select id="pageChildMenu" resultType="com.liwell.cinema.domain.vo.MenuListVO">
+        select distinct
+            m.id,
+            m.name name,
+            m.code code,
+            m.type type,
+            m.parent_id parentId,
+            m.path path,
+            m.redirect redirect,
+            m.icon icon,
+            m.component component,
+            m.layout layout,
+            m.keep_alive keepAlive,
+            m.method method,
+            m.description description,
+            m.display display,
+            m.enable enable,
+            m.sort sort
+        from menu m where m.parent_id=#{parentId}
+    </select>
+
 
 </mapper>

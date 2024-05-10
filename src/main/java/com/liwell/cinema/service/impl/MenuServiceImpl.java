@@ -8,9 +8,11 @@ import cn.hutool.core.lang.tree.TreeNode;
 import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
+import com.liwell.cinema.domain.dto.MenuChildPageDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.enums.ResultEnum;
@@ -100,6 +102,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }*/
 
     @Override
+    public Page<MenuListVO> pageChildMenu(MenuChildPageDTO dto) {
+        if (Objects.isNull(dto.getParentId())) {
+            throw new ResultException(ResultEnum.PARAMETER_ERROR);
+        }
+        return baseMapper.pageChildMenu(dto);
+    }
+
+    @Override
     @Transactional
     public Boolean deleteMenu(List<Integer> ids) {
         baseMapper.deleteBatchIds(ids);
@@ -117,11 +127,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Menu menu = BeanUtil.copyProperties(dto, Menu.class);
         List<Menu> list;
         if (Objects.isNull(dto.getParentId())) {
-            menu.setLevel(0);
             list = baseMapper.selectList(new QueryWrapper<Menu>().isNull("parent_id"));
         } else {
-            Menu parentMenu = baseMapper.selectById(dto.getParentId());
-            menu.setLevel(parentMenu.getLevel() + 1);
             list = baseMapper.selectList(new QueryWrapper<Menu>().eq("parent_id", menu.getParentId()));
         }
         if (CollectionUtil.isEmpty(list)) {

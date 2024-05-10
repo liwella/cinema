@@ -1,6 +1,8 @@
 package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.liwell.cinema.domain.dto.MenuChildPageDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.vo.MenuListVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,4 +26,5 @@ public interface MenuMapper extends BaseMapper<Menu> {
 
     Integer getMaxSort(Integer parentId);
 
+    Page<MenuListVO> pageChildMenu(MenuChildPageDTO dto);
 }
