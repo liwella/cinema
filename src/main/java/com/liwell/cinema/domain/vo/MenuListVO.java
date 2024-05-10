@@ -1,6 +1,8 @@
 package com.liwell.cinema.domain.vo;
 
-import com.liwell.cinema.domain.enums.*;
+import com.liwell.cinema.domain.enums.LayoutEnum;
+import com.liwell.cinema.domain.enums.MenuTypeEnum;
+import com.liwell.cinema.domain.enums.MethodEnum;
 import lombok.Data;
 
 /**
@@ -32,15 +34,15 @@ public class MenuListVO {
 
     private LayoutEnum layout;
 
-    private StateEnum keepAlive;
+    private Boolean keepAlive;
 
     private MethodEnum method;
 
     private String description;
 
-    private MenuDisplayEnum display;
+    private Boolean display;
 
-    private StateEnum enable;
+    private Boolean enable;
 
     private Integer sort;
 
