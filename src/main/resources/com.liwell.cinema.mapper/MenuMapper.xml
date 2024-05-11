@@ -49,6 +49,7 @@
             m.enable enable,
             m.sort sort
         from menu m
+        where m.type in (0, 1)
     </select>
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">
@@ -82,6 +83,7 @@
             m.enable enable,
             m.sort sort
         from menu m where m.parent_id=#{parentId}
+        and m.type=2
     </select>
 
 

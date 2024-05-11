@@ -13,7 +13,7 @@ public enum MenuTypeEnum implements BaseEnum {
 
     CATEGORY(0, "目录"),
     MENU(1, "菜单"),
-    PERMISSION(2, "权限")
+    PERMISSION(2, "按钮")
     ;
 
     private Integer value;
