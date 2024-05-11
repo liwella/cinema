@@ -62,11 +62,16 @@ public class MenuController {
     @PostMapping("/updateMenu")
     public Result updateMenu(@RequestBody @Valid MenuUpdateDTO dto) {
         return ResultUtil.trueOrFalse(menuService.update(new UpdateWrapper<Menu>()
-                .set("menu_name", dto.getMenuName())
-                .set("url", dto.getUrl())
-                .set("permission", dto.getPermission())
-                .set("type", dto.getType())
+                .set("name", dto.getName())
+                .set("code", dto.getCode())
+                .set("path", dto.getPath())
                 .set("icon", dto.getIcon())
+                .set("layout", dto.getLayout())
+                .set("component", dto.getComponent())
+                .set("display", dto.getDisplay())
+                .set("enable", dto.getEnable())
+                .set("keepAlive", dto.getKeepAlive())
+                .set("type", dto.getType())
                 .eq("id", dto.getId())));
     }
 

@@ -31,10 +31,13 @@ public class MenuUpdateDTO {
 
     private String component;
 
+    @NotNull(message = "显示状态不能为空")
     private Boolean display;
 
+    @NotNull(message = "状态不能为空")
     private Boolean enable;
 
+    @NotNull
     private Boolean keepAlive;
 
     @NotNull(message = "类型不能为空")
