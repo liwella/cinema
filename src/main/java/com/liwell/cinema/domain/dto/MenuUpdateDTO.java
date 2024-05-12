@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class MenuUpdateDTO {
 
+    private Integer parentId;
+
     @NotNull(message = "菜单/权限id不能为空")
     private Integer id;
 

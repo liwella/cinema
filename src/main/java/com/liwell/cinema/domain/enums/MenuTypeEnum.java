@@ -1,5 +1,6 @@
 package com.liwell.cinema.domain.enums;
 
+import com.liwell.cinema.exception.ResultException;
 import lombok.Getter;
 
 /**
@@ -25,4 +26,13 @@ public enum MenuTypeEnum implements BaseEnum {
         this.description = description;
     }
 
+    public void validate(MenuTypeEnum parentType) {
+        if ((this == MenuTypeEnum.CATEGORY || this == MenuTypeEnum.MENU)
+                && (parentType != null && parentType != MenuTypeEnum.CATEGORY)) {
+            throw new ResultException(ResultEnum.MENU_CAN_CATEGORY_OR_TOP);
+        }
+        if (this == MenuTypeEnum.PERMISSION && parentType != MenuTypeEnum.MENU) {
+            throw new ResultException(ResultEnum.PERMISSION_ONLY_MENU);
+        }
+    }
 }

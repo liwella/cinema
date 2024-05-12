@@ -35,6 +35,10 @@ public enum ResultEnum implements BaseEnum {
     ALREADY_TOP(1201, "已是最上层/底层节点，无法移动"),
     CHILDREN_EXISTS(1202, "有节点存在子分类未删除，请先删除子分类"),
 
+    // 系统模块
+    MENU_CAN_CATEGORY_OR_TOP(1220, "菜单/目录只能为顶层或归属于目录"),
+    PERMISSION_ONLY_MENU(1221, "按钮仅能归属于菜单"),
+
     // 影视模块
     TASK_IN_EXECUTE(1303, "采集源当前有采集任务在执行中，请勿重复执行"),
     TASK_STATE_ERROR(1304, "当前任务状态无法执行"),

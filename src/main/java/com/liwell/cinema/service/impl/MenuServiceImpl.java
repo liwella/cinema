@@ -14,6 +14,7 @@ import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuChildPageDTO;
 import com.liwell.cinema.domain.dto.MenuMoveDTO;
+import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.MenuListVO;
@@ -124,19 +125,32 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public Boolean addMenu(MenuAddDTO dto) {
+        if (Objects.nonNull(dto.getParentId())) {
+            Menu parent = baseMapper.selectById(dto.getParentId());
+            dto.getType().validate(parent.getType());
+        } else {
+            dto.getType().validate(null);
+        }
         Menu menu = BeanUtil.copyProperties(dto, Menu.class);
-        List<Menu> list;
-        if (Objects.isNull(dto.getParentId())) {
-            list = baseMapper.selectList(new QueryWrapper<Menu>().isNull("parent_id"));
-        } else {
-            list = baseMapper.selectList(new QueryWrapper<Menu>().eq("parent_id", menu.getParentId()));
-        }
-        if (CollectionUtil.isEmpty(list)) {
-            menu.setSort(1);
-        } else {
-            menu.setSort(list.size() + 1);
-        }
         baseMapper.insert(menu);
+        return true;
+    }
+
+    @Override
+    public Boolean updateMenu(MenuUpdateDTO dto) {
+        if (Objects.nonNull(dto.getParentId())) {
+            Menu parent = baseMapper.selectById(dto.getParentId());
+            dto.getType().validate(parent.getType());
+        } else {
+            dto.getType().validate(null);
+        }
+        this.update(new UpdateWrapper<Menu>()
+                .set("parent_id", dto.getParentId()).set("name", dto.getName())
+                .set("code", dto.getCode()).set("path", dto.getPath())
+                .set("icon", dto.getIcon()).set("layout", dto.getLayout())
+                .set("component", dto.getComponent()).set("display", dto.getDisplay())
+                .set("enable", dto.getEnable()).set("keep_alive", dto.getKeepAlive())
+                .set("type", dto.getType()).eq("id", dto.getId()));
         return true;
     }
 

@@ -3,10 +3,8 @@ package com.liwell.cinema.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.*;
-import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
@@ -61,18 +59,7 @@ public class MenuController {
 
     @PostMapping("/updateMenu")
     public Result updateMenu(@RequestBody @Valid MenuUpdateDTO dto) {
-        return ResultUtil.trueOrFalse(menuService.update(new UpdateWrapper<Menu>()
-                .set("name", dto.getName())
-                .set("code", dto.getCode())
-                .set("path", dto.getPath())
-                .set("icon", dto.getIcon())
-                .set("layout", dto.getLayout())
-                .set("component", dto.getComponent())
-                .set("display", dto.getDisplay())
-                .set("enable", dto.getEnable())
-                .set("keepAlive", dto.getKeepAlive())
-                .set("type", dto.getType())
-                .eq("id", dto.getId())));
+        return ResultUtil.trueOrFalse(menuService.updateMenu(dto));
     }
 
     @PostMapping("/moveMenu")
