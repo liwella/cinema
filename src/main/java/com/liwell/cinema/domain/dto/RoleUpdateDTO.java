@@ -16,7 +16,8 @@ public class RoleUpdateDTO {
     @NotNull(message = "角色id不能为空")
     private Integer id;
 
-    @NotNull(message = "角色名称不能为空")
     private String name;
+
+    private Boolean enable;
 
 }

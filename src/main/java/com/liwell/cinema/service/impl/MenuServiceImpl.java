@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.constants.Constants;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuChildPageDTO;
-import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.enums.ResultEnum;
@@ -24,9 +23,7 @@ import com.liwell.cinema.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -152,40 +149,6 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 .set("enable", dto.getEnable()).set("keep_alive", dto.getKeepAlive())
                 .set("type", dto.getType()).eq("id", dto.getId()));
         return true;
-    }
-
-    @Override
-    @Transactional
-    public Boolean moveMenu(MenuMoveDTO dto) {
-        Menu menu = baseMapper.selectById(dto.getId());
-        if (menu == null) {
-            throw new ResultException(ResultEnum.DATA_NOT_EXIST);
-        }
-        Map<String, Integer> params = new HashMap<>();
-        params.put("parent_id", menu.getParentId());
-        if (dto.getUp()) {
-            if (menu.getSort() == 1) {
-                throw new ResultException(ResultEnum.ALREADY_TOP);
-            }
-            params.put("sort", menu.getSort() - 1);
-            Menu up = baseMapper.selectOne(new QueryWrapper<Menu>().allEq(params));
-            transferPosition(up, menu);
-        } else {
-            if (menu.getSort().equals(baseMapper.getMaxSort(menu.getParentId()))) {
-                throw new ResultException(ResultEnum.ALREADY_TOP);
-            }
-            params.put("sort", menu.getSort() + 1);
-            Menu down = baseMapper.selectOne(new QueryWrapper<Menu>().allEq(params));
-            transferPosition(menu, down);
-        }
-        return true;
-    }
-
-    private void transferPosition(Menu up, Menu down) {
-        baseMapper.update(null, new UpdateWrapper<Menu>()
-                .set("sort", down.getSort() - 1).eq("id", down.getId()));
-        baseMapper.update(null, new UpdateWrapper<Menu>()
-                .set("sort", up.getSort() + 1).eq("id", up.getId()));
     }
 
 }

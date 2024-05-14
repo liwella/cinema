@@ -3,9 +3,9 @@ package com.liwell.cinema.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.RoleAddDTO;
+import com.liwell.cinema.domain.dto.RoleListDTO;
 import com.liwell.cinema.domain.dto.RoleUpdateDTO;
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.RoleCategory;
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Description:
@@ -47,8 +46,8 @@ public class RoleController {
     private RoleCategoryService roleCategoryService;
 
     @PostMapping("/listRole")
-    public Result<List<RoleListVO>> listRole() {
-        return ResultUtil.success(BeanUtil.copyToList(roleService.list(), RoleListVO.class));
+    public Result<List<RoleListVO>> listRole(@RequestBody RoleListDTO dto) {
+        return ResultUtil.success(roleService.listRole(dto));
     }
 
     @PostMapping("/addRole")
@@ -62,12 +61,7 @@ public class RoleController {
 
     @PostMapping("/updateRole")
     public Result updateRole(@RequestBody RoleUpdateDTO dto) {
-        Role role = roleService.getById(dto.getId());
-        if (Objects.isNull(role)) {
-            throw new ResultException(ResultEnum.NOT_ROLE_EXCEPTION);
-        }
-        return ResultUtil.trueOrFalse(roleService.update(
-                new UpdateWrapper<Role>().set("role_name", dto.getName()).eq("id", dto.getId())));
+        return ResultUtil.trueOrFalse(roleService.updateRole(dto));
     }
 
     @PostMapping("/deleteRole")

@@ -13,8 +13,10 @@ public class RoleListVO {
 
     private Integer id;
 
-    private String roleName;
+    private String name;
 
     private String code;
+
+    private Boolean enable;
 
 }

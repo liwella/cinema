@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.liwell.cinema.domain.dto.MenuAddDTO;
 import com.liwell.cinema.domain.dto.MenuChildPageDTO;
-import com.liwell.cinema.domain.dto.MenuMoveDTO;
 import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.Menu;
 import com.liwell.cinema.domain.vo.MenuListVO;
@@ -27,8 +26,6 @@ public interface MenuService extends IService<Menu> {
     Boolean updateMenu(MenuUpdateDTO dto);
 
     List<Tree<Integer>> listMenu();
-
-    Boolean moveMenu(MenuMoveDTO dto);
 
     Boolean deleteMenu(List<Integer> ids);
 

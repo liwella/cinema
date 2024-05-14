@@ -4,7 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.liwell.cinema.domain.dto.*;
+import com.liwell.cinema.domain.dto.IdDTO;
+import com.liwell.cinema.domain.dto.MenuAddDTO;
+import com.liwell.cinema.domain.dto.MenuChildPageDTO;
+import com.liwell.cinema.domain.dto.MenuUpdateDTO;
 import com.liwell.cinema.domain.entity.RoleMenu;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
@@ -60,11 +63,6 @@ public class MenuController {
     @PostMapping("/updateMenu")
     public Result updateMenu(@RequestBody @Valid MenuUpdateDTO dto) {
         return ResultUtil.trueOrFalse(menuService.updateMenu(dto));
-    }
-
-    @PostMapping("/moveMenu")
-    public Result moveMenu(@RequestBody @Valid MenuMoveDTO dto) {
-        return ResultUtil.trueOrFalse(menuService.moveMenu(dto));
     }
 
     @PostMapping("/deleteMenu")
