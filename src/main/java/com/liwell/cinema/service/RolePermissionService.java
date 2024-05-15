@@ -11,7 +11,7 @@ import com.liwell.cinema.domain.entity.RoleMenu;
  * @purpose
  * @history 2023/8/29 litianyi
  */
-public interface RoleMenuService extends IService<RoleMenu> {
+public interface RolePermissionService extends IService<RoleMenu> {
 
     Boolean updateRoleMenu(RoleMenuUpdateDTO dto);
 

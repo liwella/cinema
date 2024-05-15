@@ -9,7 +9,7 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.RoleMenuListVO;
 import com.liwell.cinema.exception.ResultException;
-import com.liwell.cinema.service.RoleMenuService;
+import com.liwell.cinema.service.RolePermissionService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,23 +30,23 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/roleMenu")
-public class RoleMenuController {
+public class RolePermissionController {
 
     @Autowired
-    private RoleMenuService roleMenuService;
+    private RolePermissionService rolePermissionService;
 
     @PostMapping("/listRoleMenu")
     public Result<List<RoleMenuListVO>> listRoleMenu(@RequestBody IdDTO dto) {
         if (Objects.isNull(dto.getId())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        return ResultUtil.success(BeanUtil.copyToList(roleMenuService
+        return ResultUtil.success(BeanUtil.copyToList(rolePermissionService
                 .list(new QueryWrapper<RoleMenu>().eq("role_id", dto.getId())), RoleMenuListVO.class));
     }
 
     @PostMapping("/updateRoleMenu")
     public Result updateRoleMenu(@RequestBody @Valid RoleMenuUpdateDTO dto) {
-        return ResultUtil.trueOrFalse(roleMenuService.updateRoleMenu(dto));
+        return ResultUtil.trueOrFalse(rolePermissionService.updateRoleMenu(dto));
     }
 
 }

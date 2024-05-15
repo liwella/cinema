@@ -10,7 +10,7 @@ import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.RoleMenuMapper;
-import com.liwell.cinema.service.RoleMenuService;
+import com.liwell.cinema.service.RolePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @history 2023/8/29 litianyi
  */
 @Service
-public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RoleMenuService {
+public class RolePermissionServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements RolePermissionService {
 
     @Autowired
     private RoleMapper roleMapper;

@@ -15,7 +15,7 @@ import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.RoleListVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.service.RoleCategoryService;
-import com.liwell.cinema.service.RoleMenuService;
+import com.liwell.cinema.service.RolePermissionService;
 import com.liwell.cinema.service.RoleService;
 import com.liwell.cinema.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
     @Autowired
-    private RoleMenuService roleMenuService;
+    private RolePermissionService rolePermissionService;
     @Autowired
     private RoleCategoryService roleCategoryService;
 
@@ -70,7 +70,7 @@ public class RoleController {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        roleMenuService.remove(new QueryWrapper<RoleMenu>().in("role_id", dto.getIds()));
+        rolePermissionService.remove(new QueryWrapper<RoleMenu>().in("role_id", dto.getIds()));
         roleCategoryService.remove(new QueryWrapper<RoleCategory>().in("role_id", dto.getIds()));
         return ResultUtil.trueOrFalse(roleService.removeByIds(dto.getIds()));
     }

@@ -1,8 +1,8 @@
 package com.liwell.cinema.domain.vo;
 
 import com.liwell.cinema.domain.enums.LayoutEnum;
-import com.liwell.cinema.domain.enums.MenuTypeEnum;
 import com.liwell.cinema.domain.enums.MethodEnum;
+import com.liwell.cinema.domain.enums.PermissionTypeEnum;
 import lombok.Data;
 
 /**
@@ -12,7 +12,7 @@ import lombok.Data;
  * @date Created on 2023/4/5
  */
 @Data
-public class MenuListVO {
+public class PermissionListVO {
 
     private Integer id;
 
@@ -20,7 +20,7 @@ public class MenuListVO {
 
     private String code;
 
-    private MenuTypeEnum type;
+    private PermissionTypeEnum type;
 
     private Integer parentId;
 

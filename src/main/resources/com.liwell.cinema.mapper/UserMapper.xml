@@ -7,17 +7,18 @@
         from user u
                  join user_role ur
                       on u.id=ur.user_id
-                 join role_menu rm
+                 join role_permission rm
                       on ur.role_id=rm.role_id
-                 join menu m
-                      on rm.menu_id=m.id
+                 join permission m
+                      on rm.permission_id=m.id
         where u.id=#{value}
     </select>
 
     <select id="listUserRole" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.entity.Role">
         select r.id,
                r.name,
-               r.code
+               r.code,
+               r.enable
         from user u
         join user_role ur
         on u.id=ur.user_id

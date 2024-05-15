@@ -10,7 +10,7 @@ import lombok.Data;
  * @date Created on 2024/5/9
  */
 @Data
-public class MenuChildPageDTO extends Page {
+public class ButtonPageDTO extends Page {
 
     private Integer parentId;
 

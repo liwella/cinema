@@ -10,7 +10,7 @@ import lombok.Getter;
  * @date Created on 2023/3/29
  */
 @Getter
-public enum MenuTypeEnum implements BaseEnum {
+public enum PermissionTypeEnum implements BaseEnum {
 
     CATEGORY(0, "目录"),
     MENU(1, "菜单"),
@@ -21,17 +21,17 @@ public enum MenuTypeEnum implements BaseEnum {
 
     private String description;
 
-    MenuTypeEnum(Integer value, String description) {
+    PermissionTypeEnum(Integer value, String description) {
         this.value = value;
         this.description = description;
     }
 
-    public void validate(MenuTypeEnum parentType) {
-        if ((this == MenuTypeEnum.CATEGORY || this == MenuTypeEnum.MENU)
-                && (parentType != null && parentType != MenuTypeEnum.CATEGORY)) {
+    public void validate(PermissionTypeEnum parentType) {
+        if ((this == PermissionTypeEnum.CATEGORY || this == PermissionTypeEnum.MENU)
+                && (parentType != null && parentType != PermissionTypeEnum.CATEGORY)) {
             throw new ResultException(ResultEnum.MENU_CAN_CATEGORY_OR_TOP);
         }
-        if (this == MenuTypeEnum.PERMISSION && parentType != MenuTypeEnum.MENU) {
+        if (this == PermissionTypeEnum.PERMISSION && parentType != PermissionTypeEnum.MENU) {
             throw new ResultException(ResultEnum.PERMISSION_ONLY_MENU);
         }
     }

@@ -11,15 +11,15 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.constants.Constants;
-import com.liwell.cinema.domain.dto.MenuAddDTO;
-import com.liwell.cinema.domain.dto.MenuChildPageDTO;
-import com.liwell.cinema.domain.dto.MenuUpdateDTO;
-import com.liwell.cinema.domain.entity.Menu;
+import com.liwell.cinema.domain.dto.ButtonPageDTO;
+import com.liwell.cinema.domain.dto.PermissionAddDTO;
+import com.liwell.cinema.domain.dto.PermissionUpdateDTO;
+import com.liwell.cinema.domain.entity.Permission;
 import com.liwell.cinema.domain.enums.ResultEnum;
-import com.liwell.cinema.domain.vo.MenuListVO;
+import com.liwell.cinema.domain.vo.PermissionListVO;
 import com.liwell.cinema.exception.ResultException;
-import com.liwell.cinema.mapper.MenuMapper;
-import com.liwell.cinema.service.MenuService;
+import com.liwell.cinema.mapper.PermissionMapper;
+import com.liwell.cinema.service.PermissionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,26 +34,26 @@ import java.util.stream.Collectors;
  * @date Created on 2023/3/29
  */
 @Service
-public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
 
     @Override
-    public List<Tree<Integer>> listUserMenu() {
+    public List<Tree<Integer>> listUserPermission() {
         if (Constants.ROLE_ADMIN.equals(StpUtil.getSession().get(Constants.CURRENT_ROLE_KEY))) {
             return listMenu();
         }
         Integer userId = StpUtil.getLoginIdAsInt();
-        List<MenuListVO> menuList = baseMapper.listUserMenu(userId);
+        List<PermissionListVO> menuList = baseMapper.listUserPermission(userId);
         return refactor(menuList);
     }
 
     @Override
     public List<Tree<Integer>> listMenu() {
-        List<MenuListVO> menuList = baseMapper.listMenu();
+        List<PermissionListVO> menuList = baseMapper.listMenu();
         return refactor(menuList);
     }
 
-    private List<Tree<Integer>> refactor(List<MenuListVO> menuList) {
+    private List<Tree<Integer>> refactor(List<PermissionListVO> menuList) {
         List<TreeNode<Integer>> nodes = menuList.stream().map(menu -> {
             TreeNode<Integer> treeNode = new TreeNode<>();
             treeNode.setId(menu.getId());
@@ -100,48 +100,48 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }*/
 
     @Override
-    public Page<MenuListVO> pageChildMenu(MenuChildPageDTO dto) {
+    public Page<PermissionListVO> pageButton(ButtonPageDTO dto) {
         if (Objects.isNull(dto.getParentId())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        return baseMapper.pageChildMenu(dto);
+        return baseMapper.pageButton(dto);
     }
 
     @Override
     @Transactional
-    public Boolean deleteMenu(List<Integer> ids) {
+    public Boolean deletePermission(List<Integer> ids) {
         baseMapper.deleteBatchIds(ids);
-        List<Menu> children = baseMapper.selectList(new QueryWrapper<Menu>().in("parent_id", ids));
+        List<Permission> children = baseMapper.selectList(new QueryWrapper<Permission>().in("parent_id", ids));
         if (CollectionUtil.isEmpty(children)) {
             return true;
         }
-        List<Integer> childrenIds = children.stream().map(Menu::getId).collect(Collectors.toList());
-        deleteMenu(childrenIds);
+        List<Integer> childrenIds = children.stream().map(Permission::getId).collect(Collectors.toList());
+        deletePermission(childrenIds);
         return true;
     }
 
     @Override
-    public Boolean addMenu(MenuAddDTO dto) {
+    public Boolean addPermission(PermissionAddDTO dto) {
         if (Objects.nonNull(dto.getParentId())) {
-            Menu parent = baseMapper.selectById(dto.getParentId());
+            Permission parent = baseMapper.selectById(dto.getParentId());
             dto.getType().validate(parent.getType());
         } else {
             dto.getType().validate(null);
         }
-        Menu menu = BeanUtil.copyProperties(dto, Menu.class);
-        baseMapper.insert(menu);
+        Permission permission = BeanUtil.copyProperties(dto, Permission.class);
+        baseMapper.insert(permission);
         return true;
     }
 
     @Override
-    public Boolean updateMenu(MenuUpdateDTO dto) {
+    public Boolean updatePermission(PermissionUpdateDTO dto) {
         if (Objects.nonNull(dto.getParentId())) {
-            Menu parent = baseMapper.selectById(dto.getParentId());
+            Permission parent = baseMapper.selectById(dto.getParentId());
             dto.getType().validate(parent.getType());
         } else {
             dto.getType().validate(null);
         }
-        this.update(new UpdateWrapper<Menu>()
+        this.update(new UpdateWrapper<Permission>()
                 .set("parent_id", dto.getParentId()).set("name", dto.getName())
                 .set("code", dto.getCode()).set("path", dto.getPath())
                 .set("icon", dto.getIcon()).set("layout", dto.getLayout())

@@ -79,7 +79,7 @@ create table if not exists dunhao.director_movie
 create index movie_id
     on dunhao.director_movie (movie_id);
 
-create table if not exists dunhao.menu
+create table if not exists dunhao.permission
 (
     id         int auto_increment comment 'id'
     primary key,

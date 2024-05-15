@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.liwell.cinema.mapper.MenuMapper">
+<mapper namespace="com.liwell.cinema.mapper.PermissionMapper">
 
-    <select id="listUserMenu" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.vo.MenuListVO">
+    <select id="listUserPermission" parameterType="java.lang.Integer" resultType="com.liwell.cinema.domain.vo.PermissionListVO">
         select distinct
             m.id,
             m.name name,
@@ -21,16 +21,16 @@
             m.enable enable,
             m.sort sort
         from user_role ur
-        join role_menu rm
+        join role_permission rm
         on ur.role_id=rm.role_id
-        join menu m
-        on rm.menu_id=m.id
+        join permission m
+        on rm.permission_id=m.id
         <where>
             ur.user_id=#{value}
         </where>
     </select>
 
-    <select id="listMenu" resultType="com.liwell.cinema.domain.vo.MenuListVO">
+    <select id="listMenu" resultType="com.liwell.cinema.domain.vo.PermissionListVO">
         select distinct
             m.id,
             m.name name,
@@ -48,12 +48,12 @@
             m.display display,
             m.enable enable,
             m.sort sort
-        from menu m
+        from permission m
         where m.type in (0, 1)
     </select>
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select max(sort) from menu
+        select max(sort) from permission
         <where>
             <if test="parentId==null">
                 parent_id is null
@@ -64,7 +64,7 @@
         </where>
     </select>
 
-    <select id="pageChildMenu" resultType="com.liwell.cinema.domain.vo.MenuListVO">
+    <select id="pageButton" resultType="com.liwell.cinema.domain.vo.PermissionListVO">
         select distinct
             m.id,
             m.name name,
@@ -82,7 +82,7 @@
             m.display display,
             m.enable enable,
             m.sort sort
-        from menu m where m.parent_id=#{parentId}
+        from permission m where m.parent_id=#{parentId}
         and m.type=2
     </select>
 
