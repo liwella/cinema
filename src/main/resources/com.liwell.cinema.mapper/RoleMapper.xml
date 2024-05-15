@@ -2,6 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liwell.cinema.mapper.RoleMapper">
 
+    <select id="listRole" parameterType="com.liwell.cinema.domain.dto.RoleListDTO" resultMap="roleListMap">
+        select
+            r.id id,
+            r.name name,
+            r.code code,
+            r.enable enable,
+            rp.permission_id permissionId
+        from role r
+        left join role_permission rp
+        on r.id=rp.role_id
+        <where>
+            <if test="name!=null and name!=''">
+                r.name like '%'||#{name}'%'
+            </if>
+            <if test="enable!=null">
+                and r.enable=#{enable}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="roleListMap" type="com.liwell.cinema.domain.vo.RoleListVO">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="code" property="code" />
+        <result column="enable" property="enable" />
+        <collection property="permissionIds" ofType="java.lang.Integer">
+            <result column="permissionId" />
+        </collection>
+    </resultMap>
+
     <update id="updateRole" parameterType="com.liwell.cinema.domain.dto.RoleUpdateDTO">
         update role
             <set>

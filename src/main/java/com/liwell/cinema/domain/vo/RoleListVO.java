@@ -2,6 +2,8 @@ package com.liwell.cinema.domain.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Description:
  *
@@ -18,5 +20,7 @@ public class RoleListVO {
     private String code;
 
     private Boolean enable;
+
+    private List<Integer> permissionIds;
 
 }

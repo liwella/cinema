@@ -9,7 +9,7 @@ import com.liwell.cinema.domain.dto.RoleListDTO;
 import com.liwell.cinema.domain.dto.RoleUpdateDTO;
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.RoleCategory;
-import com.liwell.cinema.domain.entity.RoleMenu;
+import com.liwell.cinema.domain.entity.RolePermission;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.RoleListVO;
@@ -70,7 +70,7 @@ public class RoleController {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        rolePermissionService.remove(new QueryWrapper<RoleMenu>().in("role_id", dto.getIds()));
+        rolePermissionService.remove(new QueryWrapper<RolePermission>().in("role_id", dto.getIds()));
         roleCategoryService.remove(new QueryWrapper<RoleCategory>().in("role_id", dto.getIds()));
         return ResultUtil.trueOrFalse(roleService.removeByIds(dto.getIds()));
     }

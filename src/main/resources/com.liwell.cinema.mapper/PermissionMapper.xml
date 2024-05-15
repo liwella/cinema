@@ -30,7 +30,7 @@
         </where>
     </select>
 
-    <select id="listMenu" resultType="com.liwell.cinema.domain.vo.PermissionListVO">
+    <select id="listMenu" resultType="com.liwell.cinema.domain.vo.PermissionListVO" parameterType="java.util.List">
         select distinct
             m.id,
             m.name name,
@@ -49,7 +49,11 @@
             m.enable enable,
             m.sort sort
         from permission m
-        where m.type in (0, 1)
+        <if test="list!=null">
+            <foreach collection="list" open="where m.type in (" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
     <select id="getMaxSort" parameterType="java.lang.Integer" resultType="java.lang.Integer">

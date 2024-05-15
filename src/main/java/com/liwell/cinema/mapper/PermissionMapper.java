@@ -22,7 +22,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
 
     List<PermissionListVO> listUserPermission(Integer userId);
 
-    List<PermissionListVO> listMenu();
+    List<PermissionListVO> listMenu(List<Integer> permissionTypes);
 
     Integer getMaxSort(Integer parentId);
 

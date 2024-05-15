@@ -3,8 +3,8 @@ package com.liwell.cinema.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liwell.cinema.domain.dto.IdDTO;
-import com.liwell.cinema.domain.dto.RoleMenuUpdateDTO;
-import com.liwell.cinema.domain.entity.RoleMenu;
+import com.liwell.cinema.domain.dto.RolePermissionUpdateDTO;
+import com.liwell.cinema.domain.entity.RolePermission;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.RoleMenuListVO;
@@ -41,11 +41,11 @@ public class RolePermissionController {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
         return ResultUtil.success(BeanUtil.copyToList(rolePermissionService
-                .list(new QueryWrapper<RoleMenu>().eq("role_id", dto.getId())), RoleMenuListVO.class));
+                .list(new QueryWrapper<RolePermission>().eq("role_id", dto.getId())), RoleMenuListVO.class));
     }
 
     @PostMapping("/updateRoleMenu")
-    public Result updateRoleMenu(@RequestBody @Valid RoleMenuUpdateDTO dto) {
+    public Result updateRoleMenu(@RequestBody @Valid RolePermissionUpdateDTO dto) {
         return ResultUtil.trueOrFalse(rolePermissionService.updateRoleMenu(dto));
     }
 

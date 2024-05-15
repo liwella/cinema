@@ -23,6 +23,7 @@ import com.liwell.cinema.service.PermissionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -49,8 +50,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Tree<Integer>> listMenu() {
-        List<PermissionListVO> menuList = baseMapper.listMenu();
+        List<Integer> permissionTypes = Arrays.asList(0, 1);
+        List<PermissionListVO> menuList = baseMapper.listMenu(permissionTypes);
         return refactor(menuList);
+    }
+
+    @Override
+    public List<Tree<Integer>> listAllPermission() {
+        return refactor(baseMapper.listMenu(null));
     }
 
     private List<Tree<Integer>> refactor(List<PermissionListVO> menuList) {

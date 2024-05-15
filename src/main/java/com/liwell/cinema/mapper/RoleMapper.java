@@ -1,10 +1,14 @@
 package com.liwell.cinema.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.liwell.cinema.domain.dto.RoleListDTO;
 import com.liwell.cinema.domain.dto.RoleUpdateDTO;
 import com.liwell.cinema.domain.entity.Role;
+import com.liwell.cinema.domain.vo.RoleListVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Description:
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleMapper extends BaseMapper<Role> {
 
-    void updateRole(RoleUpdateDTO dto);
+    List<RoleListVO> listRole(RoleListDTO dto);
 
+    void updateRole(RoleUpdateDTO dto);
 }

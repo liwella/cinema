@@ -31,4 +31,6 @@ public interface PermissionService extends IService<Permission> {
 
     Page<PermissionListVO> pageButton(ButtonPageDTO dto);
 
+    List<Tree<Integer>> listAllPermission();
+
 }

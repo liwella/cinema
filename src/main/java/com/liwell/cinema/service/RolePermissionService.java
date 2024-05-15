@@ -1,8 +1,8 @@
 package com.liwell.cinema.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.liwell.cinema.domain.dto.RoleMenuUpdateDTO;
-import com.liwell.cinema.domain.entity.RoleMenu;
+import com.liwell.cinema.domain.dto.RolePermissionUpdateDTO;
+import com.liwell.cinema.domain.entity.RolePermission;
 
 /**
  * @author nxg产品线 litianyi
@@ -11,8 +11,8 @@ import com.liwell.cinema.domain.entity.RoleMenu;
  * @purpose
  * @history 2023/8/29 litianyi
  */
-public interface RolePermissionService extends IService<RoleMenu> {
+public interface RolePermissionService extends IService<RolePermission> {
 
-    Boolean updateRoleMenu(RoleMenuUpdateDTO dto);
+    Boolean updateRoleMenu(RolePermissionUpdateDTO dto);
 
 }

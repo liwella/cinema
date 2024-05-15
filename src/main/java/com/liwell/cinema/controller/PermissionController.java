@@ -8,7 +8,7 @@ import com.liwell.cinema.domain.dto.ButtonPageDTO;
 import com.liwell.cinema.domain.dto.IdDTO;
 import com.liwell.cinema.domain.dto.PermissionAddDTO;
 import com.liwell.cinema.domain.dto.PermissionUpdateDTO;
-import com.liwell.cinema.domain.entity.RoleMenu;
+import com.liwell.cinema.domain.entity.RolePermission;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.PermissionListVO;
@@ -50,6 +50,11 @@ public class PermissionController {
         return ResultUtil.success(permissionService.listMenu());
     }
 
+    @PostMapping("/listAllPermission")
+    public Result<List<Tree<Integer>>> listAllPermission() {
+        return ResultUtil.success(permissionService.listAllPermission());
+    }
+
     @PostMapping("/pageButton")
     public Result<Page<PermissionListVO>> pageButton(@RequestBody ButtonPageDTO dto) {
         return ResultUtil.success(permissionService.pageButton(dto));
@@ -70,7 +75,7 @@ public class PermissionController {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        rolePermissionService.remove(new QueryWrapper<RoleMenu>().in("permission_id", dto.getIds()));
+        rolePermissionService.remove(new QueryWrapper<RolePermission>().in("permission_id", dto.getIds()));
         return ResultUtil.trueOrFalse(permissionService.deletePermission(dto.getIds()));
     }
 
