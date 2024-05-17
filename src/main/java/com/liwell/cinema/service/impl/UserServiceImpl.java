@@ -11,7 +11,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.constants.Constants;
@@ -29,16 +28,18 @@ import com.liwell.cinema.domain.vo.UserGetVO;
 import com.liwell.cinema.domain.vo.UserPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.helper.RedisHelper;
-import com.liwell.cinema.mapper.RoleMapper;
 import com.liwell.cinema.mapper.UserMapper;
-import com.liwell.cinema.mapper.UserRoleMapper;
+import com.liwell.cinema.service.RoleService;
+import com.liwell.cinema.service.UserRoleService;
 import com.liwell.cinema.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Description:
@@ -50,9 +51,9 @@ import java.util.Objects;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
-    private RoleMapper roleMapper;
+    private RoleService roleService;
     @Autowired
-    private UserRoleMapper userRoleMapper;
+    private UserRoleService userRoleService;
     @Autowired
     private RedisHelper redisHelper;
 
@@ -118,10 +119,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (CollectionUtil.isEmpty(userAddDTO.getRoleIds())) {
             return true;
         }
-        List<Role> roles = roleMapper.selectList(new QueryWrapper<Role>().in("id", userAddDTO.getRoleIds()));
+        List<Role> roles = roleService.list(new QueryWrapper<Role>().in("id", userAddDTO.getRoleIds()));
         for (Role role : roles) {
             UserRole userRole = new UserRole(user.getId(), role.getId());
-            userRoleMapper.insert(userRole);
+            userRoleService.save(userRole);
         }
         return true;
     }
@@ -147,14 +148,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Boolean updateUser(UserUpdateDTO userUpdateDTO) {
-        User user = baseMapper.selectById(userUpdateDTO.getId());
+    @Transactional
+    public Boolean updateUser(UserUpdateDTO dto) {
+        User user = baseMapper.selectById(dto.getId());
         if (Objects.isNull(user)) {
             throw new ResultException(ResultEnum.DATA_NOT_EXIST);
         }
-        baseMapper.updateUser(userUpdateDTO);
-        userRoleMapper.update(null, new UpdateWrapper<UserRole>()
-                .set("role_id", userUpdateDTO.getRole().getId()).eq("user_id", userUpdateDTO.getId()));
+        if (StringUtils.isNotBlank(dto.getPassword())) {
+            String newPw = BCrypt.hashpw(dto.getPassword());
+            dto.setPassword(newPw);
+        }
+        baseMapper.updateUser(dto);
+        if (CollectionUtil.isEmpty(dto.getRoleIds())) {
+            return userRoleService.lambdaUpdate().eq(UserRole::getUserId, dto.getId()).remove();
+        }
+        List<Integer> existedRoleIds = userRoleService.lambdaQuery()
+                .select(UserRole::getRoleId)
+                .eq(UserRole::getUserId, dto.getId())
+                .list().stream()
+                .map(UserRole::getRoleId).collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(existedRoleIds)) {
+            List<Integer> deletedRole = existedRoleIds.stream().filter(
+                    (item) -> !dto.getRoleIds().contains(item)).collect(Collectors.toList());
+            userRoleService.lambdaUpdate()
+                    .eq(UserRole::getUserId, dto.getId())
+                    .in(UserRole::getRoleId, deletedRole)
+                    .remove();
+        }
+        List<UserRole> addUserRoles = dto.getRoleIds().stream()
+                .map(roleId -> new UserRole(dto.getId(), roleId))
+                .collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(addUserRoles)) {
+            userRoleService.saveBatch(addUserRoles);
+        }
         return true;
     }
 

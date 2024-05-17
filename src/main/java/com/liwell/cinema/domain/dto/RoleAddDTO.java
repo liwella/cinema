@@ -3,6 +3,7 @@ package com.liwell.cinema.domain.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Description:
@@ -18,5 +19,10 @@ public class RoleAddDTO {
 
     @NotNull(message = "角色编码不能为空")
     private String code;
+
+    @NotNull(message = "角色状态不能为空")
+    private Boolean enable;
+
+    private List<Integer> permissionIds;
 
 }

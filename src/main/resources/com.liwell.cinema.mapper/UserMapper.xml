@@ -37,26 +37,27 @@
         <result column="createTime" property="createTime" />
         <result column="updateTime" property="updateTime" />
         <result column="state" property="state" />
-        <association property="role" javaType="com.liwell.cinema.domain.entity.Role">
-            <result column="name" property="name" />
+        <collection property="roles" ofType="com.liwell.cinema.domain.entity.Role">
+            <result column="roleName" property="name" />
             <result column="code" property="code" />
             <result column="roleId" property="id" />
-        </association>
+        </collection>
     </resultMap>
 
     <select id="pageUser" resultMap="pageUserMap">
         select
                u.id id,
                u.username username,
-               u.email email,
+               u.nickname nickname,
                u.phone phone,
+               u.email email,
                u.avatar avatar,
                u.sex sex,
                u.create_time createTime,
                u.update_time updateTime,
                u.state state,
                r.id roleId,
-               r.role_name roleName,
+               r.name roleName,
                r.code code
         from user u
         left join user_role ur
@@ -64,10 +65,8 @@
         left join role r
         on ur.role_id=r.id
         <where>
-            <if test="condition!=null and condition!=''">
-                u.username like concat('%',#{condition},'%')
-                or u.email like concat('%',#{condition},'%')
-                or u.phone like concat('%',#{condition},'%')
+            <if test="username!=null and username!=''">
+                u.username like concat('%',#{username},'%')
             </if>
             <if test="startTime!=null">
                 and u.create_time>=#{startTime}
@@ -94,15 +93,30 @@
 
     <update id="updateUser" parameterType="com.liwell.cinema.domain.dto.UserUpdateDTO">
         update user
-        set
-            username=#{username},
-            password=#{password},
-            email=#{email},
-            phone=#{phone},
-            avatar=#{avatar},
-            sex=#{sex},
-            state=#{state},
+        <set>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="avatar!=null and avatar!=''">
+                avatar=#{avatar},
+            </if>
+            <if test="sex!=null">
+                sex=#{sex},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
             update_time=now()
+        </set>
         where
             id=#{id}
     </update>

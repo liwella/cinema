@@ -1,12 +1,8 @@
 package com.liwell.cinema.controller;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.liwell.cinema.domain.dto.IdDTO;
-import com.liwell.cinema.domain.dto.RoleAddDTO;
-import com.liwell.cinema.domain.dto.RoleListDTO;
-import com.liwell.cinema.domain.dto.RoleUpdateDTO;
+import com.liwell.cinema.domain.dto.*;
 import com.liwell.cinema.domain.entity.Role;
 import com.liwell.cinema.domain.entity.RoleCategory;
 import com.liwell.cinema.domain.entity.RolePermission;
@@ -56,7 +52,7 @@ public class RoleController {
         if (CollectionUtil.isNotEmpty(roles)) {
             throw new ResultException(ResultEnum.ROLE_CODE_EXISTS);
         }
-        return ResultUtil.trueOrFalse(roleService.save(BeanUtil.copyProperties(dto, Role.class, "id")));
+        return ResultUtil.trueOrFalse(roleService.addRole(dto));
     }
 
     @PostMapping("/updateRole")
@@ -73,6 +69,16 @@ public class RoleController {
         rolePermissionService.remove(new QueryWrapper<RolePermission>().in("role_id", dto.getIds()));
         roleCategoryService.remove(new QueryWrapper<RoleCategory>().in("role_id", dto.getIds()));
         return ResultUtil.trueOrFalse(roleService.removeByIds(dto.getIds()));
+    }
+
+    @PostMapping("/addRoleUser")
+    public Result addRoleUser(@RequestBody RoleUserAddDTO dto) {
+        return ResultUtil.success(roleService.addRoleUser(dto));
+    }
+
+    @PostMapping("/deleteRoleUser")
+    public Result deleteUserRole(@RequestBody RoleUserDeleteDTO dto) {
+        return ResultUtil.success(roleService.deleteUserRole(dto));
     }
 
 }

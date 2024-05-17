@@ -41,7 +41,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public List<Tree<Integer>> listUserPermission() {
         if (Constants.ROLE_ADMIN.equals(StpUtil.getSession().get(Constants.CURRENT_ROLE_KEY))) {
-            return listMenu();
+            return listAllPermission();
         }
         Integer userId = StpUtil.getLoginIdAsInt();
         List<PermissionListVO> menuList = baseMapper.listUserPermission(userId);

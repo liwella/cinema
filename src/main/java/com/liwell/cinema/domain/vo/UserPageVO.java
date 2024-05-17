@@ -7,6 +7,7 @@ import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Description:
@@ -21,9 +22,13 @@ public class UserPageVO {
 
     private String username;
 
-    private String email;
+    private String nickname;
+
+    private String password;
 
     private String phone;
+
+    private String email;
 
     private String avatar;
 
@@ -37,6 +42,6 @@ public class UserPageVO {
 
     private StateEnum state;
 
-    private Role role;
+    private List<Role> roles;
 
 }
