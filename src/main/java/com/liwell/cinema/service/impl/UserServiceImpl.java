@@ -170,12 +170,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (CollectionUtil.isNotEmpty(existedRoleIds)) {
             List<Integer> deletedRole = existedRoleIds.stream().filter(
                     (item) -> !dto.getRoleIds().contains(item)).collect(Collectors.toList());
-            userRoleService.lambdaUpdate()
-                    .eq(UserRole::getUserId, dto.getId())
-                    .in(UserRole::getRoleId, deletedRole)
-                    .remove();
+            if (!deletedRole.isEmpty()) {
+                userRoleService.lambdaUpdate()
+                        .eq(UserRole::getUserId, dto.getId())
+                        .in(UserRole::getRoleId, deletedRole)
+                        .remove();
+            }
         }
         List<UserRole> addUserRoles = dto.getRoleIds().stream()
+                .filter((item) -> !existedRoleIds.contains(item))
                 .map(roleId -> new UserRole(dto.getId(), roleId))
                 .collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(addUserRoles)) {

@@ -32,4 +32,7 @@ public class UserAddDTO {
     @NotNull(message = "角色不能为空")
     private List<Integer> roleIds;
 
+    @NotNull(message = "用户状态不能为空")
+    private Boolean state;
+
 }

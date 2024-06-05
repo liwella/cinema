@@ -6,6 +6,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liwell.cinema.domain.dto.*;
+import com.liwell.cinema.domain.entity.UserRole;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.po.Result;
 import com.liwell.cinema.domain.vo.LoginVO;
@@ -85,7 +86,9 @@ public class UserController {
         if (CollectionUtil.isEmpty(dto.getIds())) {
             throw new ResultException(ResultEnum.PARAMETER_ERROR);
         }
-        return ResultUtil.trueOrFalse(userService.removeByIds(dto.getIds()));
+        userService.removeByIds(dto.getIds());
+        userRoleService.lambdaUpdate().in(UserRole::getUserId, dto.getIds()).remove();
+        return ResultUtil.success();
     }
 
     @GetMapping("/captcha")
