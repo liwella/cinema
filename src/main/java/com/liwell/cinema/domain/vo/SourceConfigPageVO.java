@@ -1,5 +1,7 @@
 package com.liwell.cinema.domain.vo;
 
+import com.liwell.cinema.domain.enums.CollectToolEnum;
+import com.liwell.cinema.domain.enums.SourceFormatEnum;
 import com.liwell.cinema.domain.enums.StateEnum;
 import lombok.Data;
 
@@ -10,7 +12,7 @@ import lombok.Data;
  * @history 2023/8/21 litianyi
  */
 @Data
-public class SourceConfigListVO {
+public class SourceConfigPageVO {
 
     private Integer id;
 
@@ -19,6 +21,10 @@ public class SourceConfigListVO {
     private String listUrl;
 
     private String detailUrl;
+
+    private CollectToolEnum collectTool;
+
+    private SourceFormatEnum sourceFormat;
 
     private String player;
 

@@ -11,8 +11,8 @@ spring:
       connection-timeout: 10000
       max-lifetime: 1800000
   redis:
-    host: cn-cd-txy-1.starryfrp.com
-    port: 65286
+    host: cn-js-zz.starryfrp.com
+    port: 23591
     jedis:
       pool:
         min-idle: 0

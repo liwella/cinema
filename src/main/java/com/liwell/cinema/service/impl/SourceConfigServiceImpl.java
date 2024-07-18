@@ -3,8 +3,10 @@ package com.liwell.cinema.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liwell.cinema.domain.dto.IdDTO;
+import com.liwell.cinema.domain.dto.SourceConfigPageDTO;
 import com.liwell.cinema.domain.dto.SourceConfigUpdateDTO;
 import com.liwell.cinema.domain.entity.CategoryMapping;
 import com.liwell.cinema.domain.entity.CollectTask;
@@ -13,6 +15,7 @@ import com.liwell.cinema.domain.entity.SourceConfig;
 import com.liwell.cinema.domain.enums.CollectTaskStateEnum;
 import com.liwell.cinema.domain.enums.ResultEnum;
 import com.liwell.cinema.domain.vo.ScListSimpleVO;
+import com.liwell.cinema.domain.vo.SourceConfigPageVO;
 import com.liwell.cinema.exception.ResultException;
 import com.liwell.cinema.mapper.CategoryMappingMapper;
 import com.liwell.cinema.mapper.PlaylistMapper;
@@ -52,6 +55,12 @@ public class SourceConfigServiceImpl extends ServiceImpl<SourceConfigMapper, Sou
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+
+    @Override
+    public Page<SourceConfigPageVO> pageSourceConfig(SourceConfigPageDTO dto) {
+        return baseMapper.pageSourceConfig(dto);
+    }
 
     @Override
     public Boolean updateSourceConfig(SourceConfigUpdateDTO dto) {
